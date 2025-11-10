@@ -222,7 +222,7 @@ const DocumentCenter = () => {
               padding: "10px",
             }}
           >
-            Pilih dokumen di sebelah kiri untuk membacanya
+            Pilih dokumen
           </p>
         )}
       </div>
