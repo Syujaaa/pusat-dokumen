@@ -1,26 +1,46 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../api";
-import { FaEdit, FaTrash } from "react-icons/fa";
 import Swal from "sweetalert2";
+import DataTable from "react-data-table-component";
+import { FaEdit, FaTrash } from "react-icons/fa";
 
 export default function Home() {
   const [data, setData] = useState([]);
   const [search, setSearch] = useState("");
   const [sort, setSort] = useState("desc");
+  const [page, setPage] = useState(1);
+  const [limit, setLimit] = useState(10);
+  const [totalRows, setTotalRows] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [token, setToken] = useState(localStorage.getItem("token")); // ✅ gunakan useState
+
+  useEffect(() => {
+    const handleStorageChange = () => {
+      setToken(localStorage.getItem("token"));
+    };
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
 
   const fetchData = async () => {
+    setLoading(true);
     try {
-      const res = await api.get(`?search=${search}&sort=${sort}`);
+      const res = await api.get(
+        `?search=${search}&sort=${sort}&page=${page}&limit=${limit}`
+      );
       setData(res.data.data || []);
+      setTotalRows(res.data.totalRows || 0);
     } catch (error) {
-      console.error(error);
+      console.error("Gagal memuat data:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     fetchData();
-  }, [search, sort]);
+  }, [search, sort, page, limit]);
 
   const handleDelete = async (id) => {
     const result = await Swal.fire({
@@ -55,6 +75,126 @@ export default function Home() {
     }
   };
 
+  const columns = [
+    {
+      name: "No",
+      selector: (row, index) => (page - 1) * limit + index + 1,
+      width: "70px",
+      center: true,
+    },
+    {
+      name: "Nama Pasien",
+      selector: (row) => row.nama_pasien,
+      sortable: true,
+    },
+    {
+      name: "No. RM",
+      selector: (row) => row.no_rm,
+      sortable: true,
+      width: "120px",
+    },
+    {
+      name: "Tanggal Edukasi",
+      selector: (row) =>
+        new Date(row.tanggal_edukasi).toLocaleDateString("id-ID", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        }),
+      sortable: true,
+      width: "170px",
+      center: true,
+    },
+    {
+      name: "Edukator",
+      selector: (row) => row.edukator,
+      sortable: true,
+    },
+    {
+      name: "Kesimpulan",
+      cell: (row) => (
+        <span
+          className={`px-2 py-1 rounded-md text-sm font-semibold ${
+            row.kesimpulan === "Siap pulang"
+              ? "bg-green-100 text-green-700"
+              : "bg-yellow-100 text-yellow-700"
+          }`}
+        >
+          {row.kesimpulan}
+        </span>
+      ),
+      sortable: true,
+    },
+    {
+      name: "Aksi",
+      cell: (row) =>
+        localStorage.getItem("token") ? (
+          <div className="flex gap-2">
+            <Link
+              to={`/edit/${row.id}`}
+              className="flex items-center gap-1 bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded-md transition"
+            >
+              <FaEdit /> Edit
+            </Link>
+            <button
+              onClick={() => handleDelete(row.id)}
+              className="flex items-center gap-1 bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md transition"
+            >
+              <FaTrash /> Hapus
+            </button>
+          </div>
+        ) : (
+          <Link
+            to={`/detail/${row.id}`}
+            className="flex items-center gap-1 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md transition"
+          >
+            🔍 Lihat Detail
+          </Link>
+        ),
+      ignoreRowClick: true,
+      allowOverflow: true,
+      button: true,
+      width: "220px",
+    },
+  ];
+
+  const customStyles = {
+    header: {
+      style: {
+        minHeight: "56px",
+        fontSize: "18px",
+        color: "#0f3c64",
+      },
+    },
+    headRow: {
+      style: {
+        backgroundColor: "#0f62ac",
+        color: "#fff",
+        fontWeight: "600",
+      },
+    },
+    rows: {
+      style: {
+        backgroundColor: "#fff",
+        "&:nth-of-type(odd)": {
+          backgroundColor: "#f8fbff",
+        },
+        "&:hover": {
+          backgroundColor: "#e7f3ff",
+          cursor: "pointer",
+        },
+      },
+    },
+    pagination: {
+      style: {
+        borderTop: "1px solid #e5e7eb",
+        paddingTop: "10px",
+        color: "#0f3c64",
+        fontWeight: "500",
+      },
+    },
+  };
+
   return (
     <div className="bg-white rounded-lg shadow-md p-6 mt-16">
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-3">
@@ -63,106 +203,37 @@ export default function Home() {
           placeholder="🔍 Cari nama / RM / edukator..."
           className="border border-gray-300 rounded-md px-4 py-2 w-full sm:w-1/2 focus:outline-none focus:ring-2 focus:ring-blue-400"
           value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          onChange={(e) => {
+            setPage(1);
+            setSearch(e.target.value);
+          }}
         />
-
-        <select
-          value={sort}
-          onChange={(e) => setSort(e.target.value)}
-          className="border border-gray-300 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400"
-        >
-          <option value="desc">📅 Terbaru</option>
-          <option value="asc">⏳ Terlama</option>
-        </select>
       </div>
 
-      <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
-        <table className="min-w-full border-collapse bg-white text-sm text-gray-700">
-          <thead className="bg-blue-600 text-white sticky top-0">
-            <tr>
-              <th className="px-4 py-3 text-center font-semibold">No</th>
-              <th className="px-4 py-3 text-left font-semibold">Nama Pasien</th>
-              <th className="px-4 py-3 text-left font-semibold">No. RM</th>
-              <th className="px-4 py-3 text-center font-semibold">
-                Tanggal Edukasi
-              </th>
-              <th className="px-4 py-3 text-left font-semibold">Edukator</th>
-              <th className="px-4 py-3 text-left font-semibold">Kesimpulan</th>
-              <th className="px-4 py-3 text-center font-semibold">Aksi</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.length > 0 ? (
-              data.map((item, i) => (
-                <tr
-                  key={item.id}
-                  className="hover:bg-blue-50 transition-colors duration-150 border-b"
-                >
-                  <td className="px-4 py-2 text-center">{i + 1}</td>
-                  <td className="px-4 py-2 font-medium">{item.nama_pasien}</td>
-                  <td className="px-4 py-2">{item.no_rm}</td>
-                  <td className="px-4 py-2 text-center">
-                    {new Date(item.tanggal_edukasi).toLocaleDateString(
-                      "id-ID",
-                      {
-                        day: "numeric",
-                        month: "long",
-                        year: "numeric",
-                      }
-                    )}
-                  </td>
-                  <td className="px-4 py-2">{item.edukator}</td>
-                  <td className="px-4 py-2">
-                    <span
-                      className={`px-2 py-1 rounded-md text-sm font-semibold ${
-                        item.kesimpulan === "Siap pulang"
-                          ? "bg-green-100 text-green-700"
-                          : "bg-yellow-100 text-yellow-700"
-                      }`}
-                    >
-                      {item.kesimpulan}
-                    </span>
-                  </td>
-                  <td className="px-4 py-2 text-center flex justify-center gap-2">
-                    {localStorage.getItem("token") ? (
-                      <>
-                        <Link
-                          to={`/edit/${item.id}`}
-                          className="flex items-center gap-1 bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded-md transition"
-                        >
-                          <FaEdit /> Edit
-                        </Link>
-                        <button
-                          onClick={() => handleDelete(item.id)}
-                          className="flex items-center gap-1 bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md transition"
-                        >
-                          <FaTrash /> Hapus
-                        </button>
-                      </>
-                    ) : (
-                      <Link
-                        to={`/detail/${item.id}`}
-                        className="flex items-center gap-1 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md transition"
-                      >
-                        🔍 Lihat Detail
-                      </Link>
-                    )}
-                  </td>
-                </tr>
-              ))
-            ) : (
-              <tr>
-                <td
-                  colSpan="7"
-                  className="text-center py-6 text-gray-500 italic"
-                >
-                  Tidak ada data ditemukan
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
-      </div>
+      <DataTable
+        title="🩺 Data Edukasi Pasien"
+        columns={columns}
+        data={data}
+        progressPending={loading}
+        pagination
+        paginationServer
+        paginationTotalRows={totalRows}
+        paginationPerPage={limit}
+        onChangePage={(p) => setPage(p)}
+        onChangeRowsPerPage={(newLimit) => {
+          setLimit(newLimit);
+          setPage(1);
+        }}
+        highlightOnHover
+        striped
+        responsive
+        customStyles={customStyles}
+        noDataComponent={
+          <div className="py-6 text-gray-500 italic">
+            Tidak ada data ditemukan
+          </div>
+        }
+      />
     </div>
   );
 }

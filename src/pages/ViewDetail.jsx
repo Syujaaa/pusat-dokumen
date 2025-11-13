@@ -10,7 +10,15 @@ export default function ViewDetail() {
   useEffect(() => {
     api.get(`/${id}`).then((res) => {
       if (res.data.status === "success") {
-        setForm(res.data.data);
+        const data = res.data.data;
+
+        if (data.tanggal_edukasi) {
+          const d = new Date(data.tanggal_edukasi);
+          if (!isNaN(d)) {
+            data.tanggal_edukasi = d.toISOString().split("T")[0];
+          }
+        }
+        setForm(data);
       } else {
         Swal.fire({
           icon: "error",
@@ -98,6 +106,7 @@ export default function ViewDetail() {
       <textarea
         value={form.tanda_bahaya}
         disabled
+        placeholder="Tidak ada catat tanda bahaya seperti: sesak, bengkak, jantung berdebar..."
         className="border w-full px-3 py-2 rounded bg-gray-100 cursor-not-allowed mb-4"
       />
 

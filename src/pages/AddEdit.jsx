@@ -93,7 +93,15 @@ export default function AddEdit() {
     if (isEdit) {
       api.get(`/${id}`).then((res) => {
         if (res.data.status === "success") {
-          setForm(res.data.data);
+          const data = res.data.data;
+
+          if (data.tanggal_edukasi) {
+            const d = new Date(data.tanggal_edukasi);
+            if (!isNaN(d)) {
+              data.tanggal_edukasi = d.toISOString().split("T")[0];
+            }
+          }
+          setForm(data);
         } else {
           Swal.fire({
             icon: "error",
