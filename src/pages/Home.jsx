@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../api";
 import { FaEdit, FaTrash } from "react-icons/fa";
+import Swal from "sweetalert2";
 
 export default function Home() {
   const [data, setData] = useState([]);
@@ -22,18 +23,40 @@ export default function Home() {
   }, [search, sort]);
 
   const handleDelete = async (id) => {
-    if (!confirm("Yakin ingin menghapus data ini?")) return;
-    try {
-      await api.delete(`?id=${id}`);
-      fetchData();
-    } catch (error) {
-      console.error(error);
+    const result = await Swal.fire({
+      title: "Yakin ingin menghapus data ini?",
+      text: "Data yang dihapus tidak dapat dikembalikan!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+      confirmButtonText: "Ya, hapus!",
+      cancelButtonText: "Batal",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await api.delete(`/${id}`);
+        Swal.fire({
+          icon: "success",
+          title: "Data berhasil dihapus!",
+          showConfirmButton: false,
+          timer: 1500,
+        });
+        fetchData();
+      } catch (error) {
+        console.error(error);
+        Swal.fire({
+          icon: "error",
+          title: "Gagal menghapus data!",
+          text: "Terjadi kesalahan pada server.",
+        });
+      }
     }
   };
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6 mt-16">
-
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-3">
         <input
           type="text"
@@ -52,7 +75,6 @@ export default function Home() {
           <option value="asc">⏳ Terlama</option>
         </select>
       </div>
-
 
       <div className="overflow-x-auto rounded-lg border border-gray-200 shadow-sm">
         <table className="min-w-full border-collapse bg-white text-sm text-gray-700">
@@ -80,7 +102,14 @@ export default function Home() {
                   <td className="px-4 py-2 font-medium">{item.nama_pasien}</td>
                   <td className="px-4 py-2">{item.no_rm}</td>
                   <td className="px-4 py-2 text-center">
-                    {item.tanggal_edukasi}
+                    {new Date(item.tanggal_edukasi).toLocaleDateString(
+                      "id-ID",
+                      {
+                        day: "numeric",
+                        month: "long",
+                        year: "numeric",
+                      }
+                    )}
                   </td>
                   <td className="px-4 py-2">{item.edukator}</td>
                   <td className="px-4 py-2">
@@ -95,18 +124,29 @@ export default function Home() {
                     </span>
                   </td>
                   <td className="px-4 py-2 text-center flex justify-center gap-2">
-                    <Link
-                      to={`/edit/${item.id}`}
-                      className="flex items-center gap-1 bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded-md transition"
-                    >
-                      <FaEdit /> Edit
-                    </Link>
-                    <button
-                      onClick={() => handleDelete(item.id)}
-                      className="flex items-center gap-1 bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md transition"
-                    >
-                      <FaTrash /> Hapus
-                    </button>
+                    {localStorage.getItem("token") ? (
+                      <>
+                        <Link
+                          to={`/edit/${item.id}`}
+                          className="flex items-center gap-1 bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded-md transition"
+                        >
+                          <FaEdit /> Edit
+                        </Link>
+                        <button
+                          onClick={() => handleDelete(item.id)}
+                          className="flex items-center gap-1 bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md transition"
+                        >
+                          <FaTrash /> Hapus
+                        </button>
+                      </>
+                    ) : (
+                      <Link
+                        to={`/detail/${item.id}`}
+                        className="flex items-center gap-1 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md transition"
+                      >
+                        🔍 Lihat Detail
+                      </Link>
+                    )}
                   </td>
                 </tr>
               ))
