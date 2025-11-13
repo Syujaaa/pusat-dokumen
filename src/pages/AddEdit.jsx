@@ -177,7 +177,7 @@ export default function AddEdit() {
         title: "Terjadi Kesalahan!",
         text: "Coba logout kemudian login kembali.",
         confirmButtonColor: "#3085d6",
-        confirmButtonText: "Logout Sekarang",
+        confirmButtonText: "Oke",
       });
     }
   };
