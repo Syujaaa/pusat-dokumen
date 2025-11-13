@@ -102,7 +102,7 @@ export default function DocumentCenter() {
         </button>
       </div>
 
-      {/* === AREA PDF === */}
+
       <div className="flex-1 bg-gray-900 flex items-center justify-center overflow-hidden">
         {selectedDoc ? (
           <iframe

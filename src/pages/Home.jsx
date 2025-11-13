@@ -13,8 +13,8 @@ export default function Home() {
   const [limit, setLimit] = useState(10);
   const [totalRows, setTotalRows] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [token, setToken] = useState(localStorage.getItem("token")); // ✅ gunakan useState
-
+  const [token, setToken] = useState(localStorage.getItem("token")); 
+  
   useEffect(() => {
     const handleStorageChange = () => {
       setToken(localStorage.getItem("token"));

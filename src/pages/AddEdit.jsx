@@ -4,7 +4,7 @@ import api from "../api";
 import Swal from "sweetalert2";
 
 export default function AddEdit() {
-  const [form, setForm] = useState({
+   const initialForm = {
     // Identitas Pasien
     nama_pasien: "",
     no_rm: "",
@@ -83,7 +83,9 @@ export default function AddEdit() {
     metode_edukasi: "",
     kesimpulan: "",
     topik_perlu_edukasi_ulang: "",
-  });
+  };
+
+  const [form, setForm] = useState(initialForm);
 
   const navigate = useNavigate();
   const { id } = useParams();
@@ -110,6 +112,9 @@ export default function AddEdit() {
           });
         }
       });
+    }else {
+     
+      setForm(initialForm);
     }
   }, [id]);
 

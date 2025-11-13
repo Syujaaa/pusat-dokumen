@@ -7,7 +7,7 @@ import DocumentCenter from "./components/DocumentCenter";
 import Login from "./pages/Login";
 import ViewDetail from "./pages/ViewDetail";
 import ProtectedRoute from "./components/ProtectedRoute";
-import Footer from "./components/Footer"; // <== tambahkan ini
+import Footer from "./components/Footer"; 
 
 export default function App() {
   return (
