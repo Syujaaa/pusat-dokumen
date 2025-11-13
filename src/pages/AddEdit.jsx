@@ -4,7 +4,7 @@ import api from "../api";
 import Swal from "sweetalert2";
 
 export default function AddEdit() {
-  const initialForm = {
+   const initialForm = {
     // Identitas Pasien
     nama_pasien: "",
     no_rm: "",
@@ -112,7 +112,8 @@ export default function AddEdit() {
           });
         }
       });
-    } else {
+    }else {
+     
       setForm(initialForm);
     }
   }, [id]);
@@ -172,12 +173,7 @@ export default function AddEdit() {
       navigate("/");
     } catch (error) {
       console.error(error);
-      Swal.fire({
-        icon: "error",
-        title: "Terjadi Kesalahan",
-        text: "Coba logout kemudian login kembali.",
-        confirmButtonText: "OK",
-      });
+      alert("Terjadi kesalahan saat menyimpan data, coba Logout kemudian login kembali");
     }
   };
 
