@@ -26,6 +26,7 @@ export default function ViewDetail() {
           title: "Data tidak ditemukan",
           text: res.data.message,
         });
+        navigate("/");
       }
     });
   }, [id]);

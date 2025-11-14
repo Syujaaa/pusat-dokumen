@@ -112,7 +112,7 @@ export default function AddEdit() {
             text: res.data.message,
           });
 
-          navigate('/');
+          navigate("/");
         }
       });
     } else {
@@ -145,6 +145,13 @@ export default function AddEdit() {
 
         if (!result.isConfirmed) return;
 
+        Swal.fire({
+          title: "Loading...",
+          text: "Sedang memproses data...",
+          allowOutsideClick: false,
+          didOpen: () => Swal.showLoading(),
+        });
+
         await api.put(
           `/${id}`,
           { ...form, id },
@@ -162,6 +169,12 @@ export default function AddEdit() {
           confirmButtonColor: "#3085d6",
         });
       } else {
+        Swal.fire({
+          title: "Loading...",
+          text: "Sedang menambahkan data...",
+          allowOutsideClick: false,
+          didOpen: () => Swal.showLoading(),
+        });
         await api.post("", form, {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });

@@ -27,6 +27,14 @@ export default function Login() {
 
     if (hasError) return;
 
+    Swal.fire({
+      title: "Loading...",
+      text: "Tunggu sebentar...",
+      allowOutsideClick: false,
+      didOpen: () => {
+        Swal.showLoading();
+      },
+    });
     try {
       const res = await api.post(
         "https://edukasijantungapi.onrender.com/api/login",
@@ -65,7 +73,6 @@ export default function Login() {
     <div className="flex items-center justify-center h-[85vh] ">
       <div className="w-full max-w-sm p-8 bg-white rounded-3xl shadow-xl border border-blue-100">
         <div className="flex flex-col items-center mb-6">
-        
           <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mb-3 shadow-sm">
             <svg
               xmlns="http://www.w3.org/2000/svg"
@@ -84,7 +91,6 @@ export default function Login() {
         </div>
 
         <form onSubmit={handleLogin} className="space-y-5">
-        
           <div>
             <label className="block text-gray-700 text-sm font-medium mb-1">
               Username
@@ -108,7 +114,6 @@ export default function Login() {
             )}
           </div>
 
-         
           <div>
             <label className="block text-gray-700 text-sm font-medium mb-1">
               Password
@@ -130,7 +135,6 @@ export default function Login() {
                 placeholder="Masukkan password"
               />
 
-           
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
@@ -180,7 +184,6 @@ export default function Login() {
             )}
           </div>
 
-         
           <button
             type="submit"
             className="w-full py-2.5 mt-4 text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition font-semibold shadow-md"
