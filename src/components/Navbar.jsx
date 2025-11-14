@@ -1,5 +1,5 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import Swal from "sweetalert2";
 import {
   Stethoscope,
@@ -12,7 +12,15 @@ import {
 
 export default function Navbar() {
   const navigate = useNavigate();
+  const location = useLocation();
+
   const isLoggedIn = !!localStorage.getItem("token");
+
+  const isActive = (path) => {
+    return location.pathname === path
+      ? "text-blue-700 font-semibold"
+      : "text-gray-700";
+  };
 
   const handleLogout = () => {
     Swal.fire({
@@ -41,7 +49,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="fixed top-0 left-0 w-full bg-gradient-to-r from-blue-50 to-blue-100 border-b border-blue-200 shadow-sm z-50">
+    <nav className="fixed top-0 left-0 w-full bg-[#F5F9FF] border-b border-blue-200 shadow-sm z-50">
       <div className="max-w-7xl mx-auto flex justify-between items-center py-3 px-6">
         <div className="flex items-center gap-2">
           <div className="bg-blue-600 text-white p-2 rounded-full shadow">
@@ -55,7 +63,9 @@ export default function Navbar() {
         <div className="flex gap-8 items-center text-sm md:text-base font-medium">
           <Link
             to="/"
-            className="flex items-center gap-1 text-gray-700 hover:text-blue-700 transition-colors"
+            className={`flex items-center gap-1 hover:text-blue-700 transition-colors ${isActive(
+              "/"
+            )}`}
           >
             <Home className="w-4 h-4" />
             Beranda
@@ -63,7 +73,9 @@ export default function Navbar() {
 
           <Link
             to="/booklet"
-            className="flex items-center gap-1 text-gray-700 hover:text-blue-700 transition-colors"
+            className={`flex items-center gap-1 hover:text-blue-700 transition-colors ${isActive(
+              "/booklet"
+            )}`}
           >
             <BookOpen className="w-4 h-4" />
             Booklet
@@ -71,9 +83,12 @@ export default function Navbar() {
 
           {isLoggedIn ? (
             <>
+        
               <Link
                 to="/add"
-                className="flex items-center gap-1 text-gray-700 hover:text-blue-700 transition-colors"
+                className={`flex items-center gap-1 hover:text-blue-700 transition-colors ${isActive(
+                  "/add"
+                )}`}
               >
                 <PlusCircle className="w-4 h-4" />
                 Tambah Data
@@ -90,7 +105,9 @@ export default function Navbar() {
           ) : (
             <Link
               to="/login"
-              className="flex items-center gap-1 text-gray-700 hover:text-blue-700 transition-colors"
+              className={`flex items-center gap-1 hover:text-blue-700 transition-colors ${isActive(
+                "/login"
+              )}`}
             >
               <LogIn className="w-4 h-4" />
               Login

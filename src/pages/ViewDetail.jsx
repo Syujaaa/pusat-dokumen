@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import api from "../api";
 import Swal from "sweetalert2";
+import { FaArrowLeft } from "react-icons/fa";
 
 export default function ViewDetail() {
   const [form, setForm] = useState(null);
@@ -52,33 +53,73 @@ export default function ViewDetail() {
         Detail Edukasi Pasien Gagal Jantung
       </h2>
 
-      {/* Identitas Pasien */}
       <h3 className="font-semibold mb-2">Identitas Pasien</h3>
       <div className="grid grid-cols-2 gap-3 mb-4">
-        <input
-          type="text"
-          value={form.nama_pasien}
-          disabled
-          className="border px-3 py-2 rounded bg-gray-100 cursor-not-allowed"
-        />
-        <input
-          type="text"
-          value={form.no_rm}
-          disabled
-          className="border px-3 py-2 rounded bg-gray-100 cursor-not-allowed"
-        />
-        <input
-          type="date"
-          value={form.tanggal_edukasi}
-          disabled
-          className="border px-3 py-2 rounded bg-gray-100 cursor-not-allowed"
-        />
-        <input
-          type="text"
-          value={form.edukator}
-          disabled
-          className="border px-3 py-2 rounded bg-gray-100 cursor-not-allowed"
-        />
+        <div className="flex flex-col">
+          <label htmlFor="nama_pasien" className="mb-1 font-medium">
+            Nama Pasien
+          </label>
+          <input
+            type="text"
+            id="nama_pasien"
+            name="nama_pasien"
+            value={form.nama_pasien}
+            disabled
+            placeholder="Masukkan nama pasien"
+            className="border px-3 py-2 rounded"
+            required
+          />
+        </div>
+
+        <div className="flex flex-col">
+          <label htmlFor="no_rm" className="mb-1 font-medium">
+            No. Rekam Medis (RM)
+          </label>
+          <input
+            type="text"
+            id="no_rm"
+            name="no_rm"
+            value={form.no_rm}
+            disabled
+            placeholder="Masukkan No. RM"
+            className="border px-3 py-2 rounded"
+            required
+          />
+        </div>
+
+        <div className="flex flex-col">
+          <label htmlFor="tanggal_edukasi" className="mb-1 font-medium">
+            Tanggal Edukasi
+          </label>
+
+          <input
+            type="text"
+            id="tanggal_edukasi"
+            value={new Date(form.tanggal_edukasi).toLocaleDateString("id-ID", {
+              day: "2-digit",
+              month: "long",
+              year: "numeric",
+            })}
+            disabled
+            className="border px-3 py-2 rounded bg-gray-100"
+            required
+          />
+        </div>
+
+        <div className="flex flex-col">
+          <label htmlFor="edukator" className="mb-1 font-medium">
+            Edukator
+          </label>
+          <input
+            type="text"
+            id="edukator"
+            name="edukator"
+            value={form.edukator}
+            disabled
+            placeholder="Masukkan nama edukator"
+            className="border px-3 py-2 rounded"
+          />
+        </div>
       </div>
 
       {/* 1. Diagnosis & Kondisi */}
@@ -103,6 +144,20 @@ export default function ViewDetail() {
           </div>
         </div>
       ))}
+
+      <div className="mt-4 mb-4">
+        <p className="font-bold mb-2">
+          Tanda bahaya yang harus diketahui pasien:
+        </p>
+        <ul className="list-disc pl-5 space-y-1">
+          <li>Sesak memburuk</li>
+          <li>Berat badan naik ≥2 kg/2 hari</li>
+          <li>Bengkak bertambah</li>
+          <li>Jantung berdebar/nyeri dada</li>
+          <li>Tidak nafsu makan, lemah ekstrem</li>
+        </ul>
+      </div>
+      <label>Catatan tanda bahaya</label>
       <textarea
         value={form.tanda_bahaya}
         disabled
@@ -420,9 +475,9 @@ export default function ViewDetail() {
       <div className="text-center mt-8">
         <button
           onClick={() => window.history.back()}
-          className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600"
+          className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 flex items-center justify-center gap-2"
         >
-          Kembali
+          <FaArrowLeft /> Kembali
         </button>
       </div>
     </div>

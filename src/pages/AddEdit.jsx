@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import api from "../api";
 import Swal from "sweetalert2";
+import { FaEdit, FaSave } from "react-icons/fa";
 
 export default function AddEdit() {
   const initialForm = {
@@ -295,6 +296,20 @@ export default function AddEdit() {
           </div>
         </div>
       ))}
+      <div className="mt-4 mb-4">
+        <p className="font-bold mb-2">
+          Tanda bahaya yang harus diketahui pasien:
+        </p>
+        <ul className="list-disc pl-5 space-y-1">
+          <li>Sesak memburuk</li>
+          <li>Berat badan naik ≥2 kg/2 hari</li>
+          <li>Bengkak bertambah</li>
+          <li>Jantung berdebar/nyeri dada</li>
+          <li>Tidak nafsu makan, lemah ekstrem</li>
+        </ul>
+      </div>
+
+      <label>Catatan tanda bahaya</label>
       <textarea
         name="tanda_bahaya"
         value={form.tanda_bahaya}
@@ -656,9 +671,17 @@ export default function AddEdit() {
 
       <button
         type="submit"
-        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+        className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 flex items-center gap-2"
       >
-        {isEdit ? "Perbarui Data" : "Simpan Data"}
+        {isEdit ? (
+          <>
+            <FaEdit /> Perbarui Data
+          </>
+        ) : (
+          <>
+            <FaSave /> Simpan Data
+          </>
+        )}
       </button>
     </form>
   );

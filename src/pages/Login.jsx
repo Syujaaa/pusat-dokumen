@@ -9,6 +9,7 @@ export default function Login() {
   const [errorUser, setErrorUser] = useState("");
   const [errorPass, setErrorPass] = useState("");
   const navigate = useNavigate();
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -27,10 +28,13 @@ export default function Login() {
     if (hasError) return;
 
     try {
-      const res = await api.post("https://edukasijantungapi.onrender.com/api/login", {
-        username,
-        password,
-      });
+      const res = await api.post(
+        "https://edukasijantungapi.onrender.com/api/login",
+        {
+          username,
+          password,
+        }
+      );
 
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("username", res.data.username);
@@ -58,24 +62,39 @@ export default function Login() {
   };
 
   return (
-    <div className="flex items-center justify-center mt-50 bg-gray-100 overflow-hidden">
-      <div className="w-full max-w-sm p-6 bg-white rounded-2xl shadow-lg">
-        <h2 className="text-2xl font-bold text-center text-gray-800 mb-6">
-          Login Admin
-        </h2>
+    <div className="flex items-center justify-center h-[85vh] ">
+      <div className="w-full max-w-sm p-8 bg-white rounded-3xl shadow-xl border border-blue-100">
+        <div className="flex flex-col items-center mb-6">
+        
+          <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mb-3 shadow-sm">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              className="w-10 h-10"
+            >
+              <path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-5 14h-4v-3H7v-4h3V7h4v3h3v4h-3v3z" />
+            </svg>
+          </div>
 
-        <form onSubmit={handleLogin} className="space-y-4">
+          <h2 className="text-2xl font-bold text-gray-800">Login Admin</h2>
+          <p className="text-gray-500 text-sm mt-1">
+            Sistem Edukasi Pasien — Rumah Sakit
+          </p>
+        </div>
 
+        <form onSubmit={handleLogin} className="space-y-5">
+        
           <div>
             <label className="block text-gray-700 text-sm font-medium mb-1">
               Username
             </label>
             <input
               type="text"
-              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:outline-none ${
+              className={`w-full px-4 py-2.5 border rounded-xl focus:ring-2 focus:outline-none bg-gray-50 ${
                 errorUser
                   ? "border-red-500 focus:ring-red-400"
-                  : "focus:ring-blue-500"
+                  : "border-gray-300 focus:ring-blue-400"
               }`}
               value={username}
               onChange={(e) => {
@@ -89,33 +108,82 @@ export default function Login() {
             )}
           </div>
 
-
+         
           <div>
             <label className="block text-gray-700 text-sm font-medium mb-1">
               Password
             </label>
-            <input
-              type="password"
-              className={`w-full px-4 py-2 border rounded-lg focus:ring-2 focus:outline-none ${
-                errorPass
-                  ? "border-red-500 focus:ring-red-400"
-                  : "focus:ring-blue-500"
-              }`}
-              value={password}
-              onChange={(e) => {
-                setPassword(e.target.value);
-                if (errorPass) setErrorPass(""); 
-              }}
-              placeholder="Masukkan password"
-            />
+
+            <div className="relative">
+              <input
+                type={showPassword ? "text" : "password"}
+                className={`w-full px-4 py-2.5 border rounded-xl pr-12 focus:ring-2 focus:outline-none bg-gray-50 ${
+                  errorPass
+                    ? "border-red-500 focus:ring-red-400"
+                    : "border-gray-300 focus:ring-blue-400"
+                }`}
+                value={password}
+                onChange={(e) => {
+                  setPassword(e.target.value);
+                  if (errorPass) setErrorPass("");
+                }}
+                placeholder="Masukkan password"
+              />
+
+           
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-4 flex items-center text-gray-500 hover:text-gray-700"
+              >
+                {showPassword ? (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    className="w-5 h-5"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z"
+                    />
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"
+                    />
+                  </svg>
+                ) : (
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    className="w-5 h-5"
+                    stroke="currentColor"
+                    strokeWidth="1.5"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      d="M3.98 8.223A10.477 10.477 0 001.934 12c1.292 4.03 5.228 7.178 10.066 7.178 1.72 0 3.36-.37 4.823-1.037M6.228 6.228A10.451 10.451 0 0112 4.822c4.838 0 8.774 3.148 10.066 7.178a10.523 10.523 0 01-4.132 5.527M6.228 6.228l11.544 11.544M6.228 6.228L4.5 4.5m13.272 13.272L19.5 19.5"
+                    />
+                  </svg>
+                )}
+              </button>
+            </div>
+
             {errorPass && (
               <p className="mt-1 text-sm text-red-600">{errorPass}</p>
             )}
           </div>
 
+         
           <button
             type="submit"
-            className="w-full py-2 mt-4 text-white bg-blue-600 hover:bg-blue-700 rounded-lg transition font-medium"
+            className="w-full py-2.5 mt-4 text-white bg-blue-600 hover:bg-blue-700 rounded-xl transition font-semibold shadow-md"
           >
             Login
           </button>

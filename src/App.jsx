@@ -3,15 +3,16 @@ import { Routes, Route } from "react-router-dom";
 import Home from "./pages/Home";
 import AddEdit from "./pages/AddEdit";
 import Navbar from "./components/Navbar";
-import DocumentCenter from "./components/DocumentCenter";
+import DocumentCenter from "./pages/DocumentCenter";
 import Login from "./pages/Login";
 import ViewDetail from "./pages/ViewDetail";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Footer from "./components/Footer"; 
+import NotFound from "./pages/NotFound";
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-gray-100 flex flex-col">
+    <div className="min-h-screen bg-[#E8F1FF] flex flex-col">
       <Navbar />
 
       <main className="flex-grow">
@@ -37,6 +38,7 @@ export default function App() {
             />
             <Route path="/detail/:id" element={<ViewDetail />} />
             <Route path="/login" element={<Login />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
         </div>
       </main>

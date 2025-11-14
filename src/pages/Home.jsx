@@ -13,8 +13,8 @@ export default function Home() {
   const [limit, setLimit] = useState(10);
   const [totalRows, setTotalRows] = useState(0);
   const [loading, setLoading] = useState(false);
-  const [token, setToken] = useState(localStorage.getItem("token")); 
-  
+  const [token, setToken] = useState(localStorage.getItem("token"));
+
   useEffect(() => {
     const handleStorageChange = () => {
       setToken(localStorage.getItem("token"));
@@ -188,20 +188,39 @@ export default function Home() {
     pagination: {
       style: {
         borderTop: "1px solid #e5e7eb",
-        paddingTop: "10px",
-        color: "#0f3c64",
-        fontWeight: "500",
+        paddingTop: "12px",
+        paddingBottom: "12px",
+        color: "#0F3C64",
+        fontWeight: "600",
+        fontSize: "14px",
       },
     },
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 mt-16">
+    <div className="bg-white rounded-xl shadow-md p-8 mt-16 border border-blue-100">
+      <div className="flex items-center mb-6">
+        <div className="w-10 h-10 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center shadow-sm mr-3">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            className="w-6 h-6"
+          >
+            <path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-5 14h-4v-3H7v-4h3V7h4v3h3v4h-3v3z" />
+          </svg>
+        </div>
+
+        <h2 className="text-2xl font-bold text-[#0F3C64]">
+          Data Edukasi Pasien
+        </h2>
+      </div>
+
       <div className="flex flex-col sm:flex-row justify-between items-center mb-6 gap-3">
         <input
           type="text"
           placeholder="🔍 Cari nama / RM / edukator..."
-          className="border border-gray-300 rounded-md px-4 py-2 w-full sm:w-1/2 focus:outline-none focus:ring-2 focus:ring-blue-400"
+          className="border border-blue-200 rounded-lg px-4 py-2.5 w-full sm:w-1/2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-400 shadow-sm"
           value={search}
           onChange={(e) => {
             setPage(1);
