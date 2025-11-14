@@ -84,7 +84,7 @@ export default function Home() {
       center: true,
     },
     {
-      name: "Nama Pasien",
+      name: "Nama",
       selector: (row) => row.nama_pasien,
       sortable: true,
     },
