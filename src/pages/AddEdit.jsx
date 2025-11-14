@@ -111,6 +111,8 @@ export default function AddEdit() {
             title: "Data tidak ditemukan",
             text: res.data.message,
           });
+
+          navigate('/');
         }
       });
     } else {
