@@ -86,7 +86,7 @@ export default function Login() {
 
           <h2 className="text-2xl font-bold text-gray-800">Login Admin</h2>
           <p className="text-gray-500 text-sm mt-1">
-            Sistem Edukasi Pasien — Rumah Sakit
+            Sistem Edukasi Pasien
           </p>
         </div>
 
