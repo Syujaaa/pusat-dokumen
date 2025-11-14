@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://edukasijantungapi.onrender.com/api/edukasi", 
+  baseURL: "https://edukasijantungapi.syujaaa.deno.net/api/edukasi", 
 });
 
 api.interceptors.request.use(
