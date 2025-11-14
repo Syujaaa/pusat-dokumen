@@ -139,21 +139,21 @@ export default function Home() {
               to={`/detail/${row.id}`}
               className="flex items-center gap-1 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md transition"
             >
-              <FaEye /> Detail
+              <FaEye />
             </Link>
 
             <Link
               to={`/edit/${row.id}`}
               className="flex items-center gap-1 bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1 rounded-md transition"
             >
-              <FaEdit /> Edit
+              <FaEdit />
             </Link>
 
             <button
               onClick={() => handleDelete(row.id)}
               className="flex items-center gap-1 bg-red-500 hover:bg-red-600 text-white px-3 py-1 rounded-md transition"
             >
-              <FaTrash /> Hapus
+              <FaTrash />
             </button>
           </div>
         ) : (
@@ -161,7 +161,7 @@ export default function Home() {
             to={`/detail/${row.id}`}
             className="flex items-center gap-1 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md transition"
           >
-            <FaEye /> Detail
+            <FaEye />
           </Link>
         ),
       ignoreRowClick: true,
