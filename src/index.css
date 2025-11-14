@@ -3,3 +3,11 @@
 button:hover {
   cursor: pointer;
 }
+
+input[type="checkbox"] {
+  cursor: pointer;
+}
+
+input[type="checkbox"]:hover {
+  cursor: pointer;
+}
