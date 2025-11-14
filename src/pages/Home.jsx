@@ -4,7 +4,7 @@ import api from "../api";
 import Swal from "sweetalert2";
 import DataTable from "react-data-table-component";
 import { CheckCircle, AlertTriangle } from "lucide-react";
-import { FaEdit, FaTrash } from "react-icons/fa";
+import { FaEdit, FaTrash, FaEye } from "react-icons/fa";
 
 export default function Home() {
   const [data, setData] = useState([]);
@@ -161,7 +161,7 @@ export default function Home() {
             to={`/detail/${row.id}`}
             className="flex items-center gap-1 bg-blue-500 hover:bg-blue-600 text-white px-3 py-1 rounded-md transition"
           >
-            🔍 Lihat Detail
+            <FaEye /> Detail
           </Link>
         ),
       ignoreRowClick: true,
