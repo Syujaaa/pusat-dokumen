@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import api from "../api";
 import Swal from "sweetalert2";
 import DataTable from "react-data-table-component";
+import { CheckCircle, AlertTriangle } from "lucide-react";
 import { FaEdit, FaTrash } from "react-icons/fa";
 
 export default function Home() {
@@ -114,13 +115,17 @@ export default function Home() {
       name: "Kesimpulan",
       cell: (row) => (
         <span
-          className={`px-2 py-1 rounded-md text-sm font-semibold ${
+          className={`inline-flex items-center gap-1 px-2 py-1 rounded-md text-sm font-semibold ${
             row.kesimpulan === "Siap pulang"
               ? "bg-green-100 text-green-700"
               : "bg-yellow-100 text-yellow-700"
           }`}
         >
-          {row.kesimpulan}
+          {row.kesimpulan === "Siap pulang" ? (
+            <CheckCircle className="w-4 h-4" />
+          ) : (
+            <AlertTriangle className="w-4 h-4" />
+          )}
         </span>
       ),
       sortable: true,
