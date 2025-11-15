@@ -37,7 +37,7 @@ export default function Login() {
     });
     try {
       const res = await api.post(
-        "https://edukasijantungapi.syujaaa.deno.net/api/login",
+        "/api/login",
         {
           username,
           password,

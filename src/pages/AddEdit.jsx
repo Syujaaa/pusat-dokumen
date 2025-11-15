@@ -94,7 +94,7 @@ export default function AddEdit() {
 
   useEffect(() => {
     if (isEdit) {
-      api.get(`/${id}`).then((res) => {
+      api.get(`/api/edukasi/${id}`).then((res) => {
         if (res.data.status === "success") {
           const data = res.data.data;
 
@@ -153,7 +153,7 @@ export default function AddEdit() {
         });
 
         await api.put(
-          `/${id}`,
+          `/api/edukasi/${id}`,
           { ...form, id },
           {
             headers: {
@@ -175,7 +175,7 @@ export default function AddEdit() {
           allowOutsideClick: false,
           didOpen: () => Swal.showLoading(),
         });
-        await api.post("", form, {
+        await api.post("/api/edukasi", form, {
           headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
         });
         await Swal.fire({

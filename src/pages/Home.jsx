@@ -28,7 +28,7 @@ export default function Home() {
     setLoading(true);
     try {
       const res = await api.get(
-        `?search=${search}&sort=${sort}&page=${page}&limit=${limit}`
+        `/api/edukasi?search=${search}&sort=${sort}&page=${page}&limit=${limit}`
       );
       setData(res.data.data || []);
       setTotalRows(res.data.totalRows || 0);
@@ -57,7 +57,7 @@ export default function Home() {
 
     if (result.isConfirmed) {
       try {
-        await api.delete(`/${id}`);
+        await api.delete(`/api/edukasi/${id}`);
         Swal.fire({
           icon: "success",
           title: "Data berhasil dihapus!",
