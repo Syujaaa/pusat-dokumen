@@ -9,7 +9,7 @@ export default function ViewDetail() {
   const { id } = useParams();
 
   useEffect(() => {
-    api.get(`/${id}`).then((res) => {
+    api.get(`/api/edukasi/${id}`).then((res) => {
       if (res.data.status === "success") {
         const data = res.data.data;
 
