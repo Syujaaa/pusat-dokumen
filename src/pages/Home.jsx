@@ -134,7 +134,7 @@ export default function Home() {
           )}
         </span>
       ),
-      sortable: true,
+      sortable: false,
     },
     {
       name: "Aksi",

@@ -2,14 +2,18 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import api from "../api";
+import HCaptcha from "@hcaptcha/react-hcaptcha";
 
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorUser, setErrorUser] = useState("");
   const [errorPass, setErrorPass] = useState("");
-  const navigate = useNavigate();
+  const [errorCaptcha, setErrorCaptcha] = useState("");
+
+  const [hcaptchaToken, setHcaptchaToken] = useState("");
   const [showPassword, setShowPassword] = useState(false);
+  const navigate = useNavigate();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -24,6 +28,10 @@ export default function Login() {
       setErrorPass("Password tidak boleh kosong");
       hasError = true;
     }
+    if (!hcaptchaToken) {
+      setErrorCaptcha("Silakan centang hCaptcha terlebih dahulu");
+      hasError = true;
+    }
 
     if (hasError) return;
 
@@ -35,14 +43,13 @@ export default function Login() {
         Swal.showLoading();
       },
     });
+
     try {
-      const res = await api.post(
-        "/api/login",
-        {
-          username,
-          password,
-        }
-      );
+      const res = await api.post("/api/login", {
+        username,
+        password,
+        hcaptcha: hcaptchaToken,
+      });
 
       localStorage.setItem("token", res.data.token);
       localStorage.setItem("username", res.data.username);
@@ -85,9 +92,7 @@ export default function Login() {
           </div>
 
           <h2 className="text-2xl font-bold text-gray-800">Login Admin</h2>
-          <p className="text-gray-500 text-sm mt-1">
-            Sistem Edukasi Pasien
-          </p>
+          <p className="text-gray-500 text-sm mt-1">Sistem Edukasi Pasien</p>
         </div>
 
         <form onSubmit={handleLogin} className="space-y-5">
@@ -97,7 +102,7 @@ export default function Login() {
             </label>
             <input
               type="text"
-              className={`w-full px-4 py-2.5 border rounded-xl focus:ring-2 focus:outline-none bg-gray-50 ${
+              className={`w-full px-4 py-2.5 border rounded-xl focus:ring-2 bg-gray-50 ${
                 errorUser
                   ? "border-red-500 focus:ring-red-400"
                   : "border-gray-300 focus:ring-blue-400"
@@ -122,7 +127,7 @@ export default function Login() {
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
-                className={`w-full px-4 py-2.5 border rounded-xl pr-12 focus:ring-2 focus:outline-none bg-gray-50 ${
+                className={`w-full px-4 py-2.5 border rounded-xl pr-12 focus:ring-2 bg-gray-50 ${
                   errorPass
                     ? "border-red-500 focus:ring-red-400"
                     : "border-gray-300 focus:ring-blue-400"
@@ -142,11 +147,10 @@ export default function Login() {
               >
                 {showPassword ? (
                   <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
                     viewBox="0 0 24 24"
-                    className="w-5 h-5"
+                    fill="none"
                     stroke="currentColor"
+                    className="w-5 h-5"
                     strokeWidth="1.5"
                   >
                     <path
@@ -162,17 +166,16 @@ export default function Login() {
                   </svg>
                 ) : (
                   <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
                     viewBox="0 0 24 24"
-                    className="w-5 h-5"
+                    fill="none"
                     stroke="currentColor"
+                    className="w-5 h-5"
                     strokeWidth="1.5"
                   >
                     <path
                       strokeLinecap="round"
                       strokeLinejoin="round"
-                      d="M3.98 8.223A10.477 10.477 0 001.934 12c1.292 4.03 5.228 7.178 10.066 7.178 1.72 0 3.36-.37 4.823-1.037M6.228 6.228A10.451 10.451 0 0112 4.822c4.838 0 8.774 3.148 10.066 7.178a10.523 10.523 0 01-4.132 5.527M6.228 6.228l11.544 11.544M6.228 6.228L4.5 4.5m13.272 13.272L19.5 19.5"
+                      d="M3.98 8.223A10.477 10.477 0 001.934 12c1.292 4.03 5.228 7.178 10.066 7.178 1.72 0 3.36-.37 4.823-1.037M6.228 6.228L4.5 4.5m13.272 13.272L19.5 19.5M6.228 6.228a10.451 10.451 0 0111.544 11.544"
                     />
                   </svg>
                 )}
@@ -182,6 +185,22 @@ export default function Login() {
             {errorPass && (
               <p className="mt-1 text-sm text-red-600">{errorPass}</p>
             )}
+          </div>
+
+          <div className="flex justify-center">
+            <div className="flex flex-col items-center">
+              <HCaptcha
+                sitekey="3c52a37e-8f62-4896-8dfa-cb0ae51a0728"
+                onVerify={(token) => {
+                  setHcaptchaToken(token);
+                  setErrorCaptcha("");
+                }}
+              />
+
+              {errorCaptcha && (
+                <p className="mt-1 text-sm text-red-600">{errorCaptcha}</p>
+              )}
+            </div>
           </div>
 
           <button
