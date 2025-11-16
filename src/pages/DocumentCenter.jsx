@@ -11,14 +11,19 @@ export default function DocumentCenter() {
     return saved ? JSON.parse(saved) : {};
   });
   const [loadingDocs, setLoadingDocs] = useState(true);
+  const LoadingSpinner = () => (
+    <div className="flex items-center justify-center py-10">
+      <div className="w-10 h-10 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+  );
 
   const token = localStorage.getItem("token");
   const username = localStorage.getItem("username");
   const isAdmin = username === "admin";
 
   const [showForm, setShowForm] = useState(false);
-  const [showEditForm, setShowEditForm] = useState(false); 
-  const [editingDoc, setEditingDoc] = useState(null); 
+  const [showEditForm, setShowEditForm] = useState(false);
+  const [editingDoc, setEditingDoc] = useState(null);
 
   const [newDoc, setNewDoc] = useState({
     title: "",
@@ -28,7 +33,6 @@ export default function DocumentCenter() {
   });
 
   const [editData, setEditData] = useState({
-    
     title: "",
     description: "",
     color: "bg-blue-600",
@@ -269,15 +273,11 @@ export default function DocumentCenter() {
           📚 Pusat Edukasi Jantung
         </h1>
         <p className="text-center text-gray-600 mb-6">
-          Pilih dokumen untuk dibaca:
+          Pilih dokumen untuk {isAdmin ? "diatur:" : "dibaca:"}
         </p>
 
         <div className="space-y-4">
-          {loadingDocs && (
-            <p className="text-center text-gray-500 py-4 animate-pulse">
-              📄 Memuat file booklet...
-            </p>
-          )}
+          {loadingDocs && <LoadingSpinner />}
 
           {!loadingDocs &&
             documents.map((doc) => {
@@ -337,15 +337,17 @@ export default function DocumentCenter() {
         )}
 
         {isAdmin && showEditForm && (
-          <div className="mt-6 p-4 bg-white rounded-lg shadow relative">
+          <div className="mt-6 p-4 bg-white rounded-lg shadow border border-blue-100 relative">
             <button
               onClick={() => setShowEditForm(false)}
-              className="absolute right-2 top-2 text-gray-500 hover:text-gray-700"
+              className="absolute right-2 top-2 text-gray-400 hover:text-red-500 transition"
             >
-              ❌
+              ✖
             </button>
 
-            <h2 className="text-lg font-bold mb-3">Edit Dokumen</h2>
+            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2 text-blue-700">
+              ✏️ Edit Dokumen
+            </h2>
 
             <input
               type="text"
@@ -354,7 +356,7 @@ export default function DocumentCenter() {
               onChange={(e) =>
                 setEditData({ ...editData, title: e.target.value })
               }
-              className="w-full p-2 mb-2 border rounded"
+              className="w-full p-2.5 mb-3 border border-blue-200 rounded focus:ring-2 focus:ring-blue-400 focus:outline-none"
             />
 
             <input
@@ -363,7 +365,7 @@ export default function DocumentCenter() {
               onChange={(e) =>
                 setEditData({ ...editData, fileObj: e.target.files[0] })
               }
-              className="w-full p-2 mb-2 border rounded bg-gray-50"
+              className="w-full p-2.5 mb-3 border border-blue-200 rounded bg-blue-50 text-blue-700 cursor-pointer hover:bg-blue-100 transition"
             />
 
             <textarea
@@ -372,7 +374,7 @@ export default function DocumentCenter() {
               onChange={(e) =>
                 setEditData({ ...editData, description: e.target.value })
               }
-              className="w-full p-2 mb-2 border rounded"
+              className="w-full p-2.5 mb-3 border border-blue-200 rounded h-24 focus:ring-2 focus:ring-blue-400 focus:outline-none"
             />
 
             <select
@@ -380,7 +382,7 @@ export default function DocumentCenter() {
               onChange={(e) =>
                 setEditData({ ...editData, color: e.target.value })
               }
-              className="w-full p-2 mb-3 border rounded"
+              className="w-full p-2.5 mb-4 border border-blue-200 rounded text-gray-700 focus:ring-2 focus:ring-blue-400"
             >
               <option value="bg-blue-600">Biru</option>
               <option value="bg-green-600">Hijau</option>
@@ -391,7 +393,7 @@ export default function DocumentCenter() {
             <button
               disabled={isUploading}
               onClick={handleUpdateDoc}
-              className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+              className="w-full bg-blue-600 text-white py-2.5 rounded font-semibold hover:bg-blue-700 transition disabled:opacity-50"
             >
               {isUploading ? "Mengupload..." : "Simpan Perubahan"}
             </button>
@@ -399,22 +401,24 @@ export default function DocumentCenter() {
         )}
 
         {isAdmin && showForm && !showEditForm && (
-          <div className="mt-6 p-4 bg-white rounded-lg shadow relative">
+          <div className="mt-6 p-4 bg-white rounded-lg shadow border border-blue-100 relative">
             <button
               onClick={() => setShowForm(false)}
-              className="absolute right-2 top-2 text-gray-500 hover:text-gray-700"
+              className="absolute right-2 top-2 text-gray-400 hover:text-red-500 transition"
             >
-              ❌
+              ✖
             </button>
 
-            <h2 className="text-lg font-bold mb-3">Tambah Dokumen</h2>
+            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2 text-blue-700">
+              🩺 Tambah Dokumen
+            </h2>
 
             <input
               type="text"
               placeholder="Judul dokumen"
               value={newDoc.title}
               onChange={(e) => setNewDoc({ ...newDoc, title: e.target.value })}
-              className="w-full p-2 mb-2 border rounded"
+              className="w-full p-2.5 mb-3 border border-blue-200 rounded focus:ring-2 focus:ring-blue-400 focus:outline-none"
             />
 
             <input
@@ -423,7 +427,7 @@ export default function DocumentCenter() {
               onChange={(e) =>
                 setNewDoc({ ...newDoc, fileObj: e.target.files[0] })
               }
-              className="w-full p-2 mb-2 border rounded bg-gray-50"
+              className="w-full p-2.5 mb-3 border border-blue-200 rounded bg-blue-50 text-blue-700 cursor-pointer hover:bg-blue-100 transition"
             />
 
             <textarea
@@ -432,13 +436,13 @@ export default function DocumentCenter() {
               onChange={(e) =>
                 setNewDoc({ ...newDoc, description: e.target.value })
               }
-              className="w-full p-2 mb-2 border rounded"
+              className="w-full p-2.5 mb-3 border border-blue-200 rounded h-24 focus:ring-2 focus:ring-blue-400 focus:outline-none"
             />
 
             <select
               value={newDoc.color}
               onChange={(e) => setNewDoc({ ...newDoc, color: e.target.value })}
-              className="w-full p-2 mb-3 border rounded"
+              className="w-full p-2.5 mb-4 border border-blue-200 rounded text-gray-700 focus:ring-2 focus:ring-blue-400"
             >
               <option value="bg-blue-600">Biru</option>
               <option value="bg-green-600">Hijau</option>
@@ -449,7 +453,7 @@ export default function DocumentCenter() {
             <button
               disabled={isUploading}
               onClick={handleAddDoc}
-              className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700 disabled:opacity-50"
+              className="w-full bg-blue-600 text-white py-2.5 rounded font-semibold hover:bg-blue-700 transition disabled:opacity-50"
             >
               {isUploading ? "Mengupload..." : "Simpan"}
             </button>

@@ -7,6 +7,11 @@ import { FaArrowLeft } from "react-icons/fa";
 export default function ViewDetail() {
   const [form, setForm] = useState(null);
   const { id } = useParams();
+  const LoadingSpinner = () => (
+    <div className="flex items-center justify-center py-10 mt-10">
+      <div className="w-10 h-10 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+  );
 
   useEffect(() => {
     api.get(`/api/edukasi/${id}`).then((res) => {
@@ -33,9 +38,7 @@ export default function ViewDetail() {
 
   if (!form) {
     return (
-      <div className="text-center text-gray-500 mt-10">
-        Memuat data pasien...
-      </div>
+      <LoadingSpinner />
     );
   }
 

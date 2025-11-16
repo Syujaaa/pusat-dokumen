@@ -16,6 +16,12 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [token, setToken] = useState(localStorage.getItem("token"));
 
+  const LoadingSpinner = () => (
+    <div className="flex items-center justify-center py-10">
+      <div className="w-10 h-10 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+  );
+
   useEffect(() => {
     const handleStorageChange = () => {
       setToken(localStorage.getItem("token"));
@@ -81,7 +87,7 @@ export default function Home() {
       name: "No",
       selector: (row, index) => (page - 1) * limit + index + 1,
       width: "70px",
-      center: true,
+      $center: true,
     },
     {
       name: "Nama",
@@ -104,7 +110,7 @@ export default function Home() {
         }),
       sortable: true,
       width: "170px",
-      center: true,
+      $center: true,
     },
     {
       name: "Edukator",
@@ -165,8 +171,8 @@ export default function Home() {
           </Link>
         ),
       ignoreRowClick: true,
-      allowOverflow: true,
-      button: true,
+      $allowOverflow: true,
+      $button: true,
       width: "220px",
     },
   ];
@@ -247,6 +253,7 @@ export default function Home() {
         columns={columns}
         data={data}
         progressPending={loading}
+        progressComponent={<LoadingSpinner />}
         pagination
         paginationServer
         paginationTotalRows={totalRows}

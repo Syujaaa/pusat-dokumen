@@ -91,9 +91,17 @@ export default function AddEdit() {
   const navigate = useNavigate();
   const { id } = useParams();
   const isEdit = !!id;
+  const [loading, setLoading] = useState(true);
+
+  const LoadingSpinner = () => (
+    <div className="flex items-center justify-center py-10 mt-10">
+      <div className="w-10 h-10 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+  );
 
   useEffect(() => {
     if (isEdit) {
+      setLoading(true);
       api.get(`/api/edukasi/${id}`).then((res) => {
         if (res.data.status === "success") {
           const data = res.data.data;
@@ -104,6 +112,7 @@ export default function AddEdit() {
               data.tanggal_edukasi = d.toISOString().split("T")[0];
             }
           }
+          setLoading(false)
           setForm(data);
         } else {
           Swal.fire({
@@ -116,6 +125,7 @@ export default function AddEdit() {
         }
       });
     } else {
+      setLoading(false);
       setForm(initialForm);
     }
   }, [id]);
@@ -197,6 +207,10 @@ export default function AddEdit() {
       });
     }
   };
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <form
