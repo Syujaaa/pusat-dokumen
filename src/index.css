@@ -11,3 +11,62 @@ input[type="checkbox"] {
 input[type="checkbox"]:hover {
   cursor: pointer;
 }
+
+
+@media print {
+  button {
+    display: none !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    padding: 0;
+    margin: 0;
+    color: #000;
+  }
+
+  .print-container {
+    width: 100% !important;
+    box-shadow: none !important;
+  }
+
+  * {
+    font-size: 14px !important;
+  }
+
+  .no-print {
+    display: none !important;
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+  }
+
+  main,
+  .print-container {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
+
+  .Ln {
+    break-before: page;
+    margin-top: 10mm !important;
+  }
+
+  .begin {
+    margin-top: 10mm;
+    font-size: 20px !important;
+  }
+
+  input[type="checkbox"][disabled] {
+    pointer-events: auto !important;
+    opacity: 1 !important;
+    -webkit-appearance: checkbox !important;
+    appearance: checkbox !important;
+  }
+}

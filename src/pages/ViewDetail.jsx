@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom";
 import api from "../api";
 import Swal from "sweetalert2";
 import { FaArrowLeft } from "react-icons/fa";
+import jsPDF from "jspdf";
+import html2canvas from "html2canvas";
 
 export default function ViewDetail() {
   const [form, setForm] = useState(null);
@@ -40,6 +42,34 @@ export default function ViewDetail() {
     return <LoadingSpinner />;
   }
 
+  const downloadPDF = () => {
+    const element = document.querySelector(".print-container");
+
+    html2canvas(element, { scale: 2 }).then((canvas) => {
+      const imgData = canvas.toDataURL("image/png");
+      const pdf = new jsPDF("p", "mm", "a4");
+
+      const imgWidth = 210; // A4 width mm
+      const pageHeight = 297;
+      const imgHeight = (canvas.height * imgWidth) / canvas.width;
+
+      let heightLeft = imgHeight;
+      let position = 0;
+
+      pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+      heightLeft -= pageHeight;
+
+      while (heightLeft > 0) {
+        position = heightLeft - imgHeight;
+        pdf.addPage();
+        pdf.addImage(imgData, "PNG", 0, position, imgWidth, imgHeight);
+        heightLeft -= pageHeight;
+      }
+
+      pdf.save(`edukasi-pasien-${form.nama_pasien}.pdf`);
+    });
+  };
+
   const renderCheckbox = (name) => (
     <input
       type="checkbox"
@@ -50,8 +80,8 @@ export default function ViewDetail() {
   );
 
   return (
-    <div className="max-w-4xl mx-auto bg-white shadow p-6 rounded mt-15">
-      <h2 className="text-xl font-semibold mb-4 text-center">
+    <div className="max-w-4xl mx-auto bg-white  p-6 rounded mt-15 print-container">
+      <h2 className="text-xl font-semibold mb-4 text-center begin">
         Detail Edukasi Pasien Gagal Jantung
       </h2>
 
@@ -126,27 +156,19 @@ export default function ViewDetail() {
 
       <div className="mb-6">
         <label className="block mb-1">Riwayat Obat</label>
-        <textarea
-          name="riwayat_obat"
-          value={form.riwayat_obat}
-          className="border w-full px-3 py-2 rounded"
-          placeholder="Tidak ada"
-          disabled
-        />
+        <p className="border w-full px-3 py-2 rounded bg-gray-100 min-h-[80px]">
+          {form.riwayat_obat || "Tidak ada"}
+        </p>
       </div>
 
       <div className="mb-6">
         <label className="block mb-1">Riwayat Pemeriksaan</label>
-        <textarea
-          name="riwayat_pemeriksaan"
-          value={form.riwayat_pemeriksaan}
-          className="border w-full px-3 py-2 rounded"
-          placeholder="Tidak ada"
-          disabled
-          rows={10}
-        />
+        <p className="border w-full px-3 py-2 rounded bg-gray-100 min-h-[150px] whitespace-pre-line">
+          {form.riwayat_pemeriksaan || "Tidak ada"}
+        </p>
       </div>
-      <h3 className="font-semibold mt-4 mb-2">
+
+      <h3 className="font-semibold mt-4 mb-2 Ln">
         1. Pemahaman Diagnosis & Kondisi Pasien
       </h3>
       {[
@@ -180,13 +202,11 @@ export default function ViewDetail() {
           <li>Tidak nafsu makan, lemah ekstrem</li>
         </ul>
       </div>
-      <label>Catatan tanda bahaya</label>
-      <textarea
-        value={form.tanda_bahaya}
-        disabled
-        placeholder="Tidak ada catat tanda bahaya seperti: sesak, bengkak, jantung berdebar..."
-        className="border w-full px-3 py-2 rounded bg-gray-100 cursor-not-allowed mb-4"
-      />
+      <label className="block mb-1">Catatan tanda bahaya</label>
+      <p className="border w-full px-3 py-2 rounded bg-gray-100 min-h-[100px] whitespace-pre-line mb-4">
+        {form.tanda_bahaya ||
+          "Tidak ada catatan tanda bahaya seperti: sesak, bengkak, jantung berdebar..."}
+      </p>
 
       {/* 2. Obat-Obatan */}
       <h3 className="font-semibold mt-4 mb-2">2. Obat-Obatan & Kepatuhan</h3>
@@ -234,15 +254,11 @@ export default function ViewDetail() {
           <div className="flex gap-4 items-center">
             {key === "target_berat_badan" && (
               <div className="mb-3">
-                <label>(Kg)</label>
-                <input
-                  type="number"
-                  step="0.1"
-                  name="target_berat_badan"
-                  value={form.target_berat_badan}
-                  disabled
-                  className="border w-full px-3 py-2 rounded"
-                />
+                <p className="border w-full px-3 py-2 rounded bg-gray-100">
+                  {form.target_berat_badan
+                    ? `${form.target_berat_badan} Kg`
+                    : "0 Kg"}
+                </p>
               </div>
             )}
             <label>{renderCheckbox(`${key}_dijelaskan`)} Sudah</label>
@@ -251,7 +267,7 @@ export default function ViewDetail() {
         </div>
       ))}
 
-      <h3 className="font-semibold mt-4 mb-2">4. Diet & Pembatasan</h3>
+      <h3 className="font-semibold mt-4 mb-2 Ln">4. Diet & Pembatasan</h3>
       {[
         ["diet_rendah_garam", "Diet rendah garam (<2 g/hari)"],
         ["pembatasan_cairan", "Pembatasan cairan"],
@@ -266,15 +282,11 @@ export default function ViewDetail() {
           <div className="flex gap-4">
             {key == "pembatasan_cairan" && (
               <div className="mb-3">
-                <label>(L/hari)</label>
-                <input
-                  type="number"
-                  step="0.1"
-                  name="pembatasan_cairan"
-                  value={form.pembatasan_cairan}
-                  disabled
-                  className="border w-full px-3 py-2 rounded"
-                />
+                <p className="border w-full px-3 py-2 rounded bg-gray-100">
+                  {form.pembatasan_cairan
+                    ? `${form.pembatasan_cairan} L/hari`
+                    : "0 L/hari"}
+                </p>
               </div>
             )}
             <label>
@@ -414,7 +426,7 @@ export default function ViewDetail() {
       </div>
 
       {/* Bagian 8 – Materi Edukasi yang Diberikan */}
-      <h3 className="font-semibold mt-4 mb-2">
+      <h3 className="font-semibold mt-4 mb-2 Ln">
         8. Materi Edukasi yang Diberikan
       </h3>
       <div className="mb-4">
@@ -495,14 +507,15 @@ export default function ViewDetail() {
         )}
       </div>
 
-      <div className="text-center mt-8">
+      <div className="text-center mt-4">
         <button
-          onClick={() => window.history.back()}
-          className="bg-gray-500 text-white px-4 py-2 rounded hover:bg-gray-600 flex items-center justify-center gap-2"
+          onClick={() => window.print()}
+          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
         >
-          <FaArrowLeft /> Kembali
+          🖨️ Print
         </button>
       </div>
+
     </div>
   );
 }

@@ -55,7 +55,7 @@ export default function Navbar() {
   };
 
   return (
-    <nav className="fixed top-0 left-0 w-full bg-[#F5F9FF] border-b border-blue-200 shadow-sm z-50">
+    <nav className="fixed top-0 left-0 w-full bg-[#F5F9FF] border-b border-blue-200 shadow-sm z-50 no-print">
       <div className="max-w-7xl mx-auto flex justify-between items-center py-3 px-6">
         <div className="flex items-center gap-2">
           <div className="bg-blue-600 text-white p-2 rounded-full shadow">
