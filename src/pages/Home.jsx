@@ -5,6 +5,7 @@ import Swal from "sweetalert2";
 import DataTable from "react-data-table-component";
 import { CheckCircle, AlertTriangle } from "lucide-react";
 import { FaEdit, FaTrash, FaEye } from "react-icons/fa";
+import { ChevronRight } from "lucide-react";
 
 export default function Home() {
   const [data, setData] = useState([]);
@@ -15,6 +16,7 @@ export default function Home() {
   const [totalRows, setTotalRows] = useState(0);
   const [loading, setLoading] = useState(false);
   const [token, setToken] = useState(localStorage.getItem("token"));
+  const [expandedRows, setExpandedRows] = useState([]);
 
   const LoadingSpinner = () => (
     <div className="flex items-center justify-center py-10">
@@ -29,6 +31,30 @@ export default function Home() {
     window.addEventListener("storage", handleStorageChange);
     return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
+
+  const ExpandedComponent = ({ data }) => {
+    return (
+      <div className="p-3 bg-blue-50 rounded-md border border-blue-200 mt-2 text-sm">
+        <p className="font-semibold text-blue-700 mb-1">Riwayat Obat:</p>
+        <p className="text-gray-700 mb-2 whitespace-pre-line">
+          {data.riwayat_obat || "Tidak ada data"}
+        </p>
+
+        <p className="font-semibold text-blue-700 mb-1">Riwayat Pemeriksaan:</p>
+        <p className="text-gray-700 whitespace-pre-line">
+          {data.riwayat_pemeriksaan || "Tidak ada data"}
+        </p>
+      </div>
+    );
+  };
+
+  const toggleRow = (rowId) => {
+    setExpandedRows((prev) =>
+      prev.includes(rowId)
+        ? prev.filter((id) => id !== rowId)
+        : [...prev, rowId]
+    );
+  };
 
   const fetchData = async () => {
     setLoading(true);
@@ -93,7 +119,27 @@ export default function Home() {
       name: "Nama",
       selector: (row) => row.nama_pasien,
       sortable: true,
+      cell: (row) => {
+        const isExpanded = expandedRows.includes(row.id);
+        return (
+          <div
+            onClick={() => toggleRow(row.id)}
+            className="flex items-center gap-2 cursor-pointer"
+          >
+            <span className="text-blue-600 font-semibold">
+              {row.nama_pasien}
+            </span>
+
+            <ChevronRight
+              className={`w-4 h-4 text-blue-600 transition-transform duration-200 ${
+                isExpanded ? "rotate-90" : ""
+              }`}
+            />
+          </div>
+        );
+      },
     },
+
     {
       name: "No. RM",
       selector: (row) => row.no_rm,
@@ -258,6 +304,11 @@ export default function Home() {
         paginationServer
         paginationTotalRows={totalRows}
         paginationPerPage={limit}
+        expandOnRowClicked={false}
+        expandableRows
+        expandableRowsComponent={ExpandedComponent}
+        expandableRowExpanded={(row) => expandedRows.includes(row.id)}
+        expandableRowsHideExpander
         onChangePage={(p) => setPage(p)}
         onChangeRowsPerPage={(newLimit) => {
           setLimit(newLimit);

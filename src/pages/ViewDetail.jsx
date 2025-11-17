@@ -37,9 +37,7 @@ export default function ViewDetail() {
   }, [id]);
 
   if (!form) {
-    return (
-      <LoadingSpinner />
-    );
+    return <LoadingSpinner />;
   }
 
   const renderCheckbox = (name) => (
@@ -120,13 +118,34 @@ export default function ViewDetail() {
             name="edukator"
             value={form.edukator}
             disabled
-            placeholder="Masukkan nama edukator"
+            placeholder="-"
             className="border px-3 py-2 rounded"
           />
         </div>
       </div>
 
-      {/* 1. Diagnosis & Kondisi */}
+      <div className="mb-6">
+        <label className="block mb-1">Riwayat Obat</label>
+        <textarea
+          name="riwayat_obat"
+          value={form.riwayat_obat}
+          className="border w-full px-3 py-2 rounded"
+          placeholder="Tidak ada"
+          disabled
+        />
+      </div>
+
+      <div className="mb-6">
+        <label className="block mb-1">Riwayat Pemeriksaan</label>
+        <textarea
+          name="riwayat_pemeriksaan"
+          value={form.riwayat_pemeriksaan}
+          className="border w-full px-3 py-2 rounded"
+          placeholder="Tidak ada"
+          disabled
+          rows={10}
+        />
+      </div>
       <h3 className="font-semibold mt-4 mb-2">
         1. Pemahaman Diagnosis & Kondisi Pasien
       </h3>

@@ -61,7 +61,7 @@ export default function Login() {
         confirmButtonColor: "#2563eb",
       });
 
-      navigate("/");
+      navigate("/data-pasien");
     } catch (err) {
       const msg =
         err.response?.data?.message ||

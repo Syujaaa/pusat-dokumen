@@ -84,6 +84,9 @@ export default function AddEdit() {
     metode_edukasi: "",
     kesimpulan: "",
     topik_perlu_edukasi_ulang: "",
+
+    riwayat_obat: "",
+    riwayat_pemeriksaan: "",
   };
 
   const [form, setForm] = useState(initialForm);
@@ -112,7 +115,7 @@ export default function AddEdit() {
               data.tanggal_edukasi = d.toISOString().split("T")[0];
             }
           }
-          setLoading(false)
+          setLoading(false);
           setForm(data);
         } else {
           Swal.fire({
@@ -286,6 +289,28 @@ export default function AddEdit() {
             className="border px-3 py-2 rounded"
           />
         </div>
+      </div>
+      <div className="mb-6">
+        <label className="block mb-1">Riwayat Obat</label>
+        <textarea
+          name="riwayat_obat"
+          value={form.riwayat_obat}
+          onChange={handleChange}
+          className="border w-full px-3 py-2 rounded"
+          placeholder="Riwayat obat"
+        />
+      </div>
+
+      <div className="mb-6">
+        <label className="block mb-1">Riwayat Pemeriksaan</label>
+        <textarea
+          name="riwayat_pemeriksaan"
+          value={form.riwayat_pemeriksaan}
+          onChange={handleChange}
+          className="border w-full px-3 py-2 rounded"
+          placeholder="Riwayat pemeriksaan"
+          rows={10}
+        />
       </div>
 
       <h3 className="font-semibold mt-4 mb-2">

@@ -10,6 +10,7 @@ import {
   LogOut,
   Menu,
   X,
+  Users,
 } from "lucide-react";
 
 export default function Navbar() {
@@ -39,6 +40,8 @@ export default function Navbar() {
       if (result.isConfirmed) {
         localStorage.removeItem("token");
         localStorage.removeItem("username");
+     
+        window.dispatchEvent(new Event("tokenChanged"));
         Swal.fire({
           title: "Berhasil logout!",
           text: "Anda telah keluar dari sistem.",
@@ -46,7 +49,7 @@ export default function Navbar() {
           timer: 1500,
           showConfirmButton: false,
         });
-        navigate("/login");
+        navigate("/");
       }
     });
   };
@@ -76,16 +79,31 @@ export default function Navbar() {
         </button>
 
         <div className="hidden md:flex gap-8 items-center text-sm md:text-base font-medium">
+        
+          {!isLoggedIn && (
+            <Link
+              to="/"
+              className={`flex items-center gap-1 hover:text-blue-700 transition-colors ${isActive(
+                "/"
+              )}`}
+            >
+              <Home className="w-4 h-4" />
+              Beranda
+            </Link>
+          )}
+
+         
           <Link
-            to="/"
+            to="/data-pasien"
             className={`flex items-center gap-1 hover:text-blue-700 transition-colors ${isActive(
-              "/"
+              "/data-pasien"
             )}`}
           >
-            <Home className="w-4 h-4" />
-            Beranda
+            <Users className="w-4 h-4" />
+            Data Pasien
           </Link>
 
+         
           <Link
             to="/booklet"
             className={`flex items-center gap-1 hover:text-blue-700 transition-colors ${isActive(
@@ -98,6 +116,7 @@ export default function Navbar() {
 
           {isLoggedIn ? (
             <>
+             
               <Link
                 to="/add"
                 className={`flex items-center gap-1 hover:text-blue-700 transition-colors ${isActive(
@@ -117,31 +136,49 @@ export default function Navbar() {
               </button>
             </>
           ) : (
-            <Link
-              to="/login"
-              className={`flex items-center gap-1 hover:text-blue-700 transition-colors ${isActive(
-                "/login"
-              )}`}
-            >
-              <LogIn className="w-4 h-4" />
-              Login
-            </Link>
+            <>
+             
+              <Link
+                to="/login"
+                className={`flex items-center gap-1 hover:text-blue-700 transition-colors ${isActive(
+                  "/login"
+                )}`}
+              >
+                <LogIn className="w-4 h-4" />
+                Login
+              </Link>
+            </>
           )}
         </div>
       </div>
 
+     
       {open && (
         <div className="md:hidden bg-[#F5F9FF] border-t border-blue-200 shadow-inner">
           <div className="flex flex-col py-3 px-6 gap-4 text-gray-700 text-base">
+           
+            {!isLoggedIn && (
+              <Link
+                to="/"
+                onClick={() => setOpen(false)}
+                className={`flex items-center gap-2 ${isActive("/")}`}
+              >
+                <Home className="w-5 h-5" />
+                Beranda
+              </Link>
+            )}
+
+           
             <Link
-              to="/"
+              to="/data-pasien"
               onClick={() => setOpen(false)}
-              className={`flex items-center gap-2 ${isActive("/")}`}
+              className={`flex items-center gap-2 ${isActive("/data-pasien")}`}
             >
-              <Home className="w-5 h-5" />
-              Beranda
+              <Users className="w-5 h-5" />
+              Data Pasien
             </Link>
 
+           
             <Link
               to="/booklet"
               onClick={() => setOpen(false)}
@@ -153,6 +190,7 @@ export default function Navbar() {
 
             {isLoggedIn ? (
               <>
+               
                 <Link
                   to="/add"
                   onClick={() => setOpen(false)}
@@ -174,14 +212,17 @@ export default function Navbar() {
                 </button>
               </>
             ) : (
-              <Link
-                to="/login"
-                onClick={() => setOpen(false)}
-                className={`flex items-center gap-2 ${isActive("/login")}`}
-              >
-                <LogIn className="w-5 h-5" />
-                Login
-              </Link>
+              <>
+               
+                <Link
+                  to="/login"
+                  onClick={() => setOpen(false)}
+                  className={`flex items-center gap-2 ${isActive("/login")}`}
+                >
+                  <LogIn className="w-5 h-5" />
+                  Login
+                </Link>
+              </>
             )}
           </div>
         </div>
