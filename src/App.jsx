@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import {
+  Routes,
+  Route,
+  Navigate,
+  useNavigate,
+  useLocation,
+} from "react-router-dom";
 import Home from "./pages/Home";
 import AddEdit from "./pages/AddEdit";
 import Navbar from "./components/Navbar";
@@ -11,10 +17,11 @@ import Footer from "./components/Footer";
 import NotFound from "./pages/NotFound";
 import LandingPage from "./pages/LandingPage";
 import GuestRoute from "./pages/GuestRoute";
+import api from "./api";
 
 export default function App() {
   const [isLogin, setIsLogin] = useState(false);
-
+  const navigate = useNavigate();
   useEffect(() => {
     const token = localStorage.getItem("token");
     setIsLogin(!!token);
@@ -30,6 +37,33 @@ export default function App() {
       window.removeEventListener("tokenChanged", handleTokenChange);
     };
   }, []);
+  useEffect(() => {
+    const checkSession = async () => {
+      const token = localStorage.getItem("token");
+      if (!token) return;
+
+      try {
+        await api.get("/api/check-auth");
+      } catch (err) {
+        console.warn("Session invalid. Auto logout.");
+
+        localStorage.removeItem("token");
+        localStorage.removeItem("username");
+        localStorage.removeItem("user_id");
+
+        delete api.defaults.headers.common["Authorization"];
+
+        window.dispatchEvent(new Event("tokenChanged"));
+        navigate("/");
+      }
+    };
+
+    checkSession();
+
+    window.addEventListener("tokenChanged", checkSession);
+
+    return () => window.removeEventListener("tokenChanged", checkSession);
+  }, [location.pathname]);
 
   return (
     <div className="min-h-screen bg-[#E8F1FF] flex flex-col">
@@ -38,7 +72,6 @@ export default function App() {
       <main className="flex-grow">
         <div className="max-w-5xl mx-auto p-4">
           <Routes>
-           
             <Route
               path="/"
               element={
@@ -50,10 +83,8 @@ export default function App() {
               }
             />
 
-         
             <Route path="/data-pasien" element={<Home />} />
 
-           
             <Route
               path="/add"
               element={
@@ -72,10 +103,8 @@ export default function App() {
               }
             />
 
-            
             <Route path="/booklet" element={<DocumentCenter />} />
             <Route path="/detail/:id" element={<ViewDetail />} />
-
 
             <Route
               path="/login"

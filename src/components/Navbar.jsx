@@ -27,32 +27,46 @@ export default function Navbar() {
   };
 
   const handleLogout = () => {
-    Swal.fire({
-      title: "Yakin ingin logout?",
-      text: "Anda akan keluar dari akun admin.",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#2563eb",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Ya, logout",
-      cancelButtonText: "Batal",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        localStorage.removeItem("token");
-        localStorage.removeItem("username");
-     
-        window.dispatchEvent(new Event("tokenChanged"));
-        Swal.fire({
-          title: "Berhasil logout!",
-          text: "Anda telah keluar dari sistem.",
-          icon: "success",
-          timer: 1500,
-          showConfirmButton: false,
-        });
-        navigate("/");
+  Swal.fire({
+    title: "Yakin ingin logout?",
+    text: "Anda akan keluar dari akun admin.",
+    icon: "warning",
+    showCancelButton: true,
+    confirmButtonColor: "#2563eb",
+    cancelButtonColor: "#d33",
+    confirmButtonText: "Ya, logout",
+    cancelButtonText: "Batal",
+  }).then(async (result) => {
+    if (result.isConfirmed) {
+      const token = localStorage.getItem("token");
+
+      try {
+        await api.post("/api/logout", { token });
+      } catch (err) {
+        console.warn("Logout API error (tetap lanjut):", err);
       }
-    });
-  };
+
+      localStorage.removeItem("token");
+      localStorage.removeItem("username");
+      localStorage.removeItem("user_id");
+
+      delete api.defaults.headers.common["Authorization"];
+
+      window.dispatchEvent(new Event("tokenChanged"));
+
+      Swal.fire({
+        title: "Berhasil logout!",
+        text: "Anda telah keluar dari sistem.",
+        icon: "success",
+        timer: 1500,
+        showConfirmButton: false,
+      });
+
+      navigate("/");
+    }
+  });
+};
+
 
   return (
     <nav className="fixed top-0 left-0 w-full bg-[#F5F9FF] border-b border-blue-200 shadow-sm z-50 no-print">
