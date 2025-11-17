@@ -143,6 +143,26 @@ export default function AddEdit() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!form.metode_edukasi || form.metode_edukasi.trim() === "") {
+      Swal.fire({
+        icon: "error",
+        title: "Metode Belum Dipilih",
+        text: "Silakan pilih salah satu metode edukasi.",
+        confirmButtonColor: "#3085d6",
+      });
+      return;
+    }
+
+    if (!form.kesimpulan || form.kesimpulan.trim() === "") {
+      Swal.fire({
+        icon: "error",
+        title: "Kesimpulan Belum Dipilih",
+        text: "Silakan pilih salah satu kesimpulan.",
+        confirmButtonColor: "#3085d6",
+      });
+      return;
+    }
     try {
       if (isEdit) {
         const result = await Swal.fire({
