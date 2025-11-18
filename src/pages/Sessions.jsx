@@ -57,6 +57,14 @@ export default function Sessions() {
     });
 
     if (result.isConfirmed) {
+      Swal.fire({
+        title: "Menghapus...",
+        html: "Mohon tunggu sebentar",
+        allowOutsideClick: false,
+        didOpen: () => {
+          Swal.showLoading();
+        },
+      });
       try {
         await api.delete(`/api/sessions/${id}`);
         Swal.fire({

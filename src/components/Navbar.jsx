@@ -215,6 +215,16 @@ export default function Navbar() {
                   Tambah Data
                 </Link>
 
+                <Link
+                to="/sessions"
+                className={`flex items-center gap-1 hover:text-blue-700 transition-colors ${isActive(
+                  "/sessions"
+                )}`}
+              >
+                <List className="w-4 h-4" />
+                Sessions
+              </Link>
+
                 <button
                   onClick={() => {
                     setOpen(false);
