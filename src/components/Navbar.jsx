@@ -11,7 +11,9 @@ import {
   Menu,
   X,
   Users,
+  List
 } from "lucide-react";
+import api from "../api";
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -27,46 +29,45 @@ export default function Navbar() {
   };
 
   const handleLogout = () => {
-  Swal.fire({
-    title: "Yakin ingin logout?",
-    text: "Anda akan keluar dari akun admin.",
-    icon: "warning",
-    showCancelButton: true,
-    confirmButtonColor: "#2563eb",
-    cancelButtonColor: "#d33",
-    confirmButtonText: "Ya, logout",
-    cancelButtonText: "Batal",
-  }).then(async (result) => {
-    if (result.isConfirmed) {
-      const token = localStorage.getItem("token");
+    Swal.fire({
+      title: "Yakin ingin logout?",
+      text: "Anda akan keluar dari akun admin.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#2563eb",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Ya, logout",
+      cancelButtonText: "Batal",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        const token = localStorage.getItem("token");
 
-      try {
-        await api.post("/api/logout", { token });
-      } catch (err) {
-        console.warn("Logout API error (tetap lanjut):", err);
+        try {
+          await api.post("/api/logout", { token });
+        } catch (err) {
+          console.warn("Logout API error (tetap lanjut):", err);
+        }
+
+        localStorage.removeItem("token");
+        localStorage.removeItem("username");
+        localStorage.removeItem("user_id");
+
+        delete api.defaults.headers.common["Authorization"];
+
+        window.dispatchEvent(new Event("tokenChanged"));
+
+        Swal.fire({
+          title: "Berhasil logout!",
+          text: "Anda telah keluar dari sistem.",
+          icon: "success",
+          timer: 1500,
+          showConfirmButton: false,
+        });
+
+        navigate("/");
       }
-
-      localStorage.removeItem("token");
-      localStorage.removeItem("username");
-      localStorage.removeItem("user_id");
-
-      delete api.defaults.headers.common["Authorization"];
-
-      window.dispatchEvent(new Event("tokenChanged"));
-
-      Swal.fire({
-        title: "Berhasil logout!",
-        text: "Anda telah keluar dari sistem.",
-        icon: "success",
-        timer: 1500,
-        showConfirmButton: false,
-      });
-
-      navigate("/");
-    }
-  });
-};
-
+    });
+  };
 
   return (
     <nav className="fixed top-0 left-0 w-full bg-[#F5F9FF] border-b border-blue-200 shadow-sm z-50 no-print">
@@ -93,7 +94,6 @@ export default function Navbar() {
         </button>
 
         <div className="hidden md:flex gap-8 items-center text-sm md:text-base font-medium">
-        
           {!isLoggedIn && (
             <Link
               to="/"
@@ -106,7 +106,6 @@ export default function Navbar() {
             </Link>
           )}
 
-         
           <Link
             to="/data-pasien"
             className={`flex items-center gap-1 hover:text-blue-700 transition-colors ${isActive(
@@ -117,7 +116,6 @@ export default function Navbar() {
             Data Pasien
           </Link>
 
-         
           <Link
             to="/booklet"
             className={`flex items-center gap-1 hover:text-blue-700 transition-colors ${isActive(
@@ -130,7 +128,6 @@ export default function Navbar() {
 
           {isLoggedIn ? (
             <>
-             
               <Link
                 to="/add"
                 className={`flex items-center gap-1 hover:text-blue-700 transition-colors ${isActive(
@@ -139,6 +136,16 @@ export default function Navbar() {
               >
                 <PlusCircle className="w-4 h-4" />
                 Tambah Data
+              </Link>
+
+              <Link
+                to="/sessions"
+                className={`flex items-center gap-1 hover:text-blue-700 transition-colors ${isActive(
+                  "/sessions"
+                )}`}
+              >
+                <List className="w-4 h-4" />
+                Sessions
               </Link>
 
               <button
@@ -151,7 +158,6 @@ export default function Navbar() {
             </>
           ) : (
             <>
-             
               <Link
                 to="/login"
                 className={`flex items-center gap-1 hover:text-blue-700 transition-colors ${isActive(
@@ -166,11 +172,9 @@ export default function Navbar() {
         </div>
       </div>
 
-     
       {open && (
         <div className="md:hidden bg-[#F5F9FF] border-t border-blue-200 shadow-inner">
           <div className="flex flex-col py-3 px-6 gap-4 text-gray-700 text-base">
-           
             {!isLoggedIn && (
               <Link
                 to="/"
@@ -182,7 +186,6 @@ export default function Navbar() {
               </Link>
             )}
 
-           
             <Link
               to="/data-pasien"
               onClick={() => setOpen(false)}
@@ -192,7 +195,6 @@ export default function Navbar() {
               Data Pasien
             </Link>
 
-           
             <Link
               to="/booklet"
               onClick={() => setOpen(false)}
@@ -204,7 +206,6 @@ export default function Navbar() {
 
             {isLoggedIn ? (
               <>
-               
                 <Link
                   to="/add"
                   onClick={() => setOpen(false)}
@@ -227,7 +228,6 @@ export default function Navbar() {
               </>
             ) : (
               <>
-               
                 <Link
                   to="/login"
                   onClick={() => setOpen(false)}

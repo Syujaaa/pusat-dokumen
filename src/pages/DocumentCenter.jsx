@@ -460,17 +460,21 @@ export default function DocumentCenter() {
           </div>
         )}
 
-        {!isAdmin && (
-          <button
-            onClick={() => {
-              localStorage.removeItem("readDocs");
-              setReadDocs({});
-            }}
-            className="w-full mt-6 bg-red-600 hover:bg-red-700 text-white py-2 rounded-md"
-          >
-            🔁 Reset Checklist
-          </button>
-        )}
+        {/* {!isAdmin &&
+          (() => {
+            const data = JSON.parse(localStorage.getItem("readDocs") || "{}");
+            return Object.keys(data).length > 0;
+          })() && (
+            <button
+              onClick={() => {
+                localStorage.removeItem("readDocs");
+                setReadDocs({});
+              }}
+              className="w-full mt-6 bg-red-600 hover:bg-red-700 text-white py-2 rounded-md"
+            >
+              🔁 Reset Checklist
+            </button>
+          )} */}
       </div>
 
       <div className="flex-1 bg-gray-900 flex items-center justify-center">

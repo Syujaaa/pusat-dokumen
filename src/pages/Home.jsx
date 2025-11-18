@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import api from "../api";
 import Swal from "sweetalert2";
@@ -17,6 +17,10 @@ export default function Home() {
   const [loading, setLoading] = useState(false);
   const [token, setToken] = useState(localStorage.getItem("token"));
   const [expandedRows, setExpandedRows] = useState([]);
+  const [collapsed, setCollapsed] = useState(false);
+  const tableRef = React.useRef(null);
+  const [expandedColumnsRows, setExpandedColumnsRows] = useState([]);
+  const [expandedDetailRows, setExpandedDetailRows] = useState([]);
 
   const LoadingSpinner = () => (
     <div className="flex items-center justify-center py-10">
@@ -32,29 +36,160 @@ export default function Home() {
     return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
-  const ExpandedComponent = ({ data }) => {
-    return (
-      <div className="p-3 bg-blue-50 rounded-md border border-blue-200 mt-2 text-sm">
-        <p className="font-semibold text-blue-700 mb-1">Riwayat Obat:</p>
-        <p className="text-gray-700 mb-2 whitespace-pre-line">
-          {data.riwayat_obat || "Tidak ada data"}
-        </p>
+  useEffect(() => {
+    if (!tableRef.current) return;
 
-        <p className="font-semibold text-blue-700 mb-1">Riwayat Pemeriksaan:</p>
-        <p className="text-gray-700 whitespace-pre-line">
-          {data.riwayat_pemeriksaan || "Tidak ada data"}
-        </p>
-      </div>
-    );
-  };
+    const observer = new ResizeObserver(([entry]) => {
+      const width = entry.contentRect.width;
 
-  const toggleRow = (rowId) => {
-    setExpandedRows((prev) =>
+      if (width < 600) {
+        setCollapsed(true);
+      } else {
+        setCollapsed(false);
+      }
+    });
+
+    observer.observe(tableRef.current);
+
+    return () => observer.disconnect();
+  }, []);
+
+  const toggleColumnsRow = (rowId) => {
+    setExpandedColumnsRows((prev) =>
       prev.includes(rowId)
         ? prev.filter((id) => id !== rowId)
         : [...prev, rowId]
     );
   };
+
+  const toggleDetailRow = (rowId) => {
+    setExpandedDetailRows((prev) =>
+      prev.includes(rowId)
+        ? prev.filter((id) => id !== rowId)
+        : [...prev, rowId]
+    );
+  };
+
+  const ExpandedDetailComponent = ({ data }) => {
+    return (
+      <div className="p-2 bg-[#e9f4ff] border border-blue-200 rounded-lg shadow-sm text-xs mb-3">
+        <div className="mb-2 bg-white p-2 rounded-md border border-blue-100 shadow-sm">
+          <p className="font-semibold text-[#0F3C64] mb-1">Riwayat Obat</p>
+          <p className="text-gray-700 whitespace-pre-line leading-normal">
+            {data.riwayat_obat || "Tidak ada data"}
+          </p>
+        </div>
+
+        <div className="bg-white p-2 rounded-md border border-blue-100 shadow-sm">
+          <p className="font-semibold text-[#0F3C64] mb-1">
+            Riwayat Pemeriksaan
+          </p>
+          <p className="text-gray-700 whitespace-pre-line leading-normal">
+            {data.riwayat_pemeriksaan || "Tidak ada data"}
+          </p>
+        </div>
+      </div>
+    );
+  };
+
+  const ExpandedColumnsComponent = ({ data }) => {
+    return (
+      <div className="p-2 bg-[#e7f3ff] border border-blue-200 rounded-xl shadow-sm text-sm">
+        <p className="font-semibold text-[#0F3C64] text-sm mb-2">
+          Detail Informasi Pasien
+        </p>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+          <div className="bg-white p-2 rounded-lg border border-blue-100 shadow-sm">
+            <strong className="text-[#0F3C64]">No. RM:</strong>
+            <p className="text-gray-700">{data.no_rm}</p>
+          </div>
+
+          <div className="bg-white p-2 rounded-lg border border-blue-100 shadow-sm">
+            <strong className="text-[#0F3C64]">Tanggal Edukasi:</strong>
+            <p className="text-gray-700">
+              {new Date(data.tanggal_edukasi).toLocaleDateString("id-ID", {
+                day: "numeric",
+                month: "long",
+                year: "numeric",
+              })}
+            </p>
+          </div>
+
+          <div className="bg-white p-2 rounded-lg border border-blue-100 shadow-sm">
+            <strong className="text-[#0F3C64]">Edukator:</strong>
+            <p className="text-gray-700">{data.edukator}</p>
+          </div>
+
+          <div className="bg-white p-2 rounded-lg border border-blue-100 shadow-sm">
+            <strong className="text-[#0F3C64]">Kesimpulan:</strong>
+            <div className="mt-1">
+              <span
+                className={`inline-flex items-center gap-1 px-2 py-1 rounded-md text-xs font-semibold ${
+                  data.kesimpulan === "Siap pulang"
+                    ? "bg-green-100 text-green-700"
+                    : "bg-yellow-100 text-yellow-700"
+                }`}
+              >
+                {data.kesimpulan === "Siap pulang" ? (
+                  <CheckCircle className="w-4 h-4" />
+                ) : (
+                  <AlertTriangle className="w-4 h-4" />
+                )}
+                {data.kesimpulan}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div className="flex gap-2 mt-3">
+          {localStorage.getItem("token") ? (
+            <div className="flex gap-2">
+              <Link
+                to={`/detail/${data.id}`}
+                className="flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg shadow transition"
+              >
+                <FaEye />
+                Detail
+              </Link>
+
+              <Link
+                to={`/edit/${data.id}`}
+                className="flex items-center gap-1 bg-yellow-400 hover:bg-yellow-500 text-white px-3 py-1.5 rounded-lg shadow transition"
+              >
+                <FaEdit />
+                Edit
+              </Link>
+
+              <button
+                onClick={() => handleDelete(data.id)}
+                className="flex items-center gap-1 bg-red-500 hover:bg-red-600 text-white px-3 py-1.5 rounded-lg shadow transition"
+              >
+                <FaTrash />
+                Hapus
+              </button>
+            </div>
+          ) : (
+            <Link
+              to={`/detail/${data.id}`}
+              className="flex items-center gap-1 bg-blue-600 hover:bg-blue-700 text-white px-3 py-1.5 rounded-lg shadow transition"
+            >
+              <FaEye />
+              Detail
+            </Link>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  // const toggleRow = (rowId) => {
+  //   setExpandedRows((prev) =>
+  //     prev.includes(rowId)
+  //       ? prev.filter((id) => id !== rowId)
+  //       : [...prev, rowId]
+  //   );
+  // };
 
   const fetchData = async () => {
     setLoading(true);
@@ -110,6 +245,24 @@ export default function Home() {
 
   const columns = [
     {
+      name: "",
+      width: "40px",
+      omit: !collapsed,
+      cell: (row) => {
+        const isExpanded = expandedColumnsRows.includes(row.id);
+        return (
+          <ChevronRight
+            onClick={() => toggleColumnsRow(row.id)}
+            className={`w-5 h-5 text-blue-600 cursor-pointer transition-transform ${
+              isExpanded ? "rotate-90" : ""
+            }`}
+          />
+        );
+      },
+      ignoreRowClick: true,
+    },
+
+    {
       name: "No",
       selector: (row, index) => (page - 1) * limit + index + 1,
       width: "70px",
@@ -120,10 +273,11 @@ export default function Home() {
       selector: (row) => row.nama_pasien,
       sortable: true,
       cell: (row) => {
-        const isExpanded = expandedRows.includes(row.id);
+        const isExpanded = expandedDetailRows.includes(row.id);
+
         return (
           <div
-            onClick={() => toggleRow(row.id)}
+            onClick={() => toggleDetailRow(row.id)}
             className="flex items-center gap-2 cursor-pointer"
           >
             <span className="text-blue-600 font-semibold">
@@ -131,7 +285,7 @@ export default function Home() {
             </span>
 
             <ChevronRight
-              className={`w-4 h-4 text-blue-600 transition-transform duration-200 ${
+              className={`w-4 h-4 text-blue-600 transition-transform ${
                 isExpanded ? "rotate-90" : ""
               }`}
             />
@@ -145,6 +299,7 @@ export default function Home() {
       selector: (row) => row.no_rm,
       sortable: true,
       width: "120px",
+      omit: collapsed,
     },
     {
       name: "Tanggal Edukasi",
@@ -157,11 +312,16 @@ export default function Home() {
       sortable: true,
       width: "170px",
       $center: true,
+      sortFunction: (a, b) => {
+        return new Date(a.tanggal_edukasi) - new Date(b.tanggal_edukasi);
+      },
+      omit: collapsed,
     },
     {
       name: "Edukator",
       selector: (row) => row.edukator,
       sortable: true,
+      omit: collapsed,
     },
     {
       name: "Kesimpulan",
@@ -181,6 +341,7 @@ export default function Home() {
         </span>
       ),
       sortable: false,
+      omit: collapsed,
     },
     {
       name: "Aksi",
@@ -220,6 +381,7 @@ export default function Home() {
       $allowOverflow: true,
       $button: true,
       width: "220px",
+      omit: collapsed,
     },
   ];
 
@@ -293,37 +455,51 @@ export default function Home() {
           }}
         />
       </div>
+      <div ref={tableRef}>
+        <DataTable
+          title="🩺 Data Edukasi Pasien"
+          columns={columns}
+          data={data}
+          progressPending={loading}
+          progressComponent={<LoadingSpinner />}
+          pagination
+          paginationServer
+          paginationTotalRows={totalRows}
+          paginationPerPage={limit}
+          expandOnRowClicked={false}
+          expandableRows
+          expandableRowsComponent={({ data }) => (
+            <div>
+              {expandedColumnsRows.includes(data.id) && (
+                <ExpandedColumnsComponent data={data} />
+              )}
 
-      <DataTable
-        title="🩺 Data Edukasi Pasien"
-        columns={columns}
-        data={data}
-        progressPending={loading}
-        progressComponent={<LoadingSpinner />}
-        pagination
-        paginationServer
-        paginationTotalRows={totalRows}
-        paginationPerPage={limit}
-        expandOnRowClicked={false}
-        expandableRows
-        expandableRowsComponent={ExpandedComponent}
-        expandableRowExpanded={(row) => expandedRows.includes(row.id)}
-        expandableRowsHideExpander
-        onChangePage={(p) => setPage(p)}
-        onChangeRowsPerPage={(newLimit) => {
-          setLimit(newLimit);
-          setPage(1);
-        }}
-        highlightOnHover
-        striped
-        responsive
-        customStyles={customStyles}
-        noDataComponent={
-          <div className="py-6 text-gray-500 italic">
-            Tidak ada data ditemukan
-          </div>
-        }
-      />
+              {expandedDetailRows.includes(data.id) && (
+                <ExpandedDetailComponent data={data} />
+              )}
+            </div>
+          )}
+          expandableRowExpanded={(row) =>
+            expandedColumnsRows.includes(row.id) ||
+            expandedDetailRows.includes(row.id)
+          }
+          expandableRowsHideExpander
+          onChangePage={(p) => setPage(p)}
+          onChangeRowsPerPage={(newLimit) => {
+            setLimit(newLimit);
+            setPage(1);
+          }}
+          highlightOnHover
+          striped
+          responsive
+          customStyles={customStyles}
+          noDataComponent={
+            <div className="py-6 text-gray-500 italic">
+              Tidak ada data ditemukan
+            </div>
+          }
+        />
+      </div>
     </div>
   );
 }

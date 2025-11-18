@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import api from "../api";
 import HCaptcha from "@hcaptcha/react-hcaptcha";
 
 export default function Login() {
+  const captchaRef = useRef();
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [hcaptchaToken, setHcaptchaToken] = useState("");
@@ -30,7 +32,7 @@ export default function Login() {
       setErrorPass("Password tidak boleh kosong");
       hasError = true;
     }
-    if (!hcaptchaToken) {
+    if (!hasError && !hcaptchaToken) {
       setErrorCaptcha("Silakan centang hCaptcha terlebih dahulu");
       hasError = true;
     }
@@ -55,8 +57,7 @@ export default function Login() {
       localStorage.setItem("username", res.data.username);
       localStorage.setItem("user_id", res.data.id);
 
-      api.defaults.headers.common["Authorization"] =
-        `Bearer ${res.data.token}`;
+      api.defaults.headers.common["Authorization"] = `Bearer ${res.data.token}`;
 
       await Swal.fire({
         icon: "success",
@@ -77,17 +78,21 @@ export default function Login() {
       });
 
       setHcaptchaToken("");
+      captchaRef.current.resetCaptcha();
     }
   };
 
   return (
     <div className="flex items-center justify-center h-[85vh]">
       <div className="w-full max-w-sm p-8 bg-white rounded-3xl shadow-xl border border-blue-100">
-
         <div className="flex flex-col items-center mb-6">
           <div className="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mb-3 shadow-sm">
-            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"
-              fill="currentColor" className="w-10 h-10">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 24 24"
+              fill="currentColor"
+              className="w-10 h-10"
+            >
               <path d="M19 3H5a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2V5a2 2 0 00-2-2zm-5 14h-4v-3H7v-4h3V7h4v3h3v4h-3v3z" />
             </svg>
           </div>
@@ -97,13 +102,16 @@ export default function Login() {
         </div>
 
         <form onSubmit={handleLogin} className="space-y-5">
-
           <div>
-            <label className="block text-gray-700 text-sm font-medium mb-1">Username</label>
+            <label className="block text-gray-700 text-sm font-medium mb-1">
+              Username
+            </label>
             <input
               type="text"
               className={`w-full px-4 py-2.5 border rounded-xl focus:ring-2 bg-gray-50 ${
-                errorUser ? "border-red-500 focus:ring-red-400" : "border-gray-300 focus:ring-blue-400"
+                errorUser
+                  ? "border-red-500 focus:ring-red-400"
+                  : "border-gray-300 focus:ring-blue-400"
               }`}
               value={username}
               onChange={(e) => {
@@ -112,16 +120,22 @@ export default function Login() {
               }}
               placeholder="Masukkan username"
             />
-            {errorUser && <p className="mt-1 text-sm text-red-600">{errorUser}</p>}
+            {errorUser && (
+              <p className="mt-1 text-sm text-red-600">{errorUser}</p>
+            )}
           </div>
 
           <div>
-            <label className="block text-gray-700 text-sm font-medium mb-1">Password</label>
+            <label className="block text-gray-700 text-sm font-medium mb-1">
+              Password
+            </label>
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
                 className={`w-full px-4 py-2.5 border rounded-xl pr-12 focus:ring-2 bg-gray-50 ${
-                  errorPass ? "border-red-500 focus:ring-red-400" : "border-gray-300 focus:ring-blue-400"
+                  errorPass
+                    ? "border-red-500 focus:ring-red-400"
+                    : "border-gray-300 focus:ring-blue-400"
                 }`}
                 value={password}
                 onChange={(e) => {
@@ -140,19 +154,26 @@ export default function Login() {
               </button>
             </div>
 
-            {errorPass && <p className="mt-1 text-sm text-red-600">{errorPass}</p>}
+            {errorPass && (
+              <p className="mt-1 text-sm text-red-600">{errorPass}</p>
+            )}
           </div>
 
           <div className="flex justify-center">
             <div>
               <HCaptcha
+                ref={captchaRef}
                 sitekey="3c52a37e-8f62-4896-8dfa-cb0ae51a0728"
                 onVerify={(token) => {
                   setHcaptchaToken(token);
                   setErrorCaptcha("");
                 }}
+                onExpire={() => setHcaptchaToken("")}
+                onError={() => setHcaptchaToken("")}
               />
-              {errorCaptcha && <p className="mt-1 text-sm text-red-600">{errorCaptcha}</p>}
+              {errorCaptcha && (
+                <p className="mt-1 text-sm text-red-600">{errorCaptcha}</p>
+              )}
             </div>
           </div>
 
@@ -163,7 +184,6 @@ export default function Login() {
             Login
           </button>
         </form>
-
       </div>
     </div>
   );

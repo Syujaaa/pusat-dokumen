@@ -18,6 +18,7 @@ import NotFound from "./pages/NotFound";
 import LandingPage from "./pages/LandingPage";
 import GuestRoute from "./pages/GuestRoute";
 import api from "./api";
+import Sessions from "./pages/Sessions";
 
 export default function App() {
   const [isLogin, setIsLogin] = useState(false);
@@ -99,6 +100,15 @@ export default function App() {
               element={
                 <ProtectedRoute>
                   <AddEdit />
+                </ProtectedRoute>
+              }
+            />
+
+            <Route
+              path="/sessions"
+              element={
+                <ProtectedRoute>
+                  <Sessions />
                 </ProtectedRoute>
               }
             />
