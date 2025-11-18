@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import {
   HeartPulse,
@@ -19,6 +19,7 @@ import { useNavigate } from "react-router-dom";
 
 export default function LandingPage() {
   const navigate = useNavigate();
+  const [zoom, setZoom] = useState(false);
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -193,7 +194,7 @@ export default function LandingPage() {
 
       <section
         id="apa-itu"
-        className="py-24 px-6 md:px-24 grid md:grid-cols-2 gap-16 items-center relative"
+        className="py-24 px-6 md:px-24 grid md:grid-cols-2 gap-16 items-start relative"
       >
         <motion.div
           initial={{ opacity: 0, x: -40 }}
@@ -261,7 +262,7 @@ export default function LandingPage() {
               {[
                 {
                   type: "HFrEF",
-                  desc: "jantung tidak kuat memompa (EF rendah)",
+                  desc: "jantung tidak kuat memompa (Ejection Fraction rendah)",
                 },
                 {
                   type: "HFpEF",
@@ -286,7 +287,7 @@ export default function LandingPage() {
         </motion.div>
 
         <motion.div
-          initial={{ opacity: 0, x: 40 }}
+          initial={{ opacity: 0, x: 20 }}
           whileInView={{ opacity: 1, x: 0 }}
           viewport={viewportConfig}
           transition={{ duration: 0.7 }}
@@ -295,25 +296,15 @@ export default function LandingPage() {
           <motion.div
             whileHover={{ scale: 1.05 }}
             transition={{ type: "spring", stiffness: 300 }}
-            className="bg-white shadow-2xl rounded-3xl p-8 relative overflow-hidden"
+            className="bg-white shadow-2xl rounded-3xl p-8 relative overflow-hidden mt-18"
           >
             <div className="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-blue-500 to-red-500"></div>
             <img
-              src="https://cdn.kastatic.org/ka-perseus-images/cacead7ad31f6d56734e801109d32260ecbff787.svg"
-              alt="Ilustrasi Jantung"
-              className="rounded-2xl w-full"
+              src="/photo/heart-failure-congestive-600w.png"
+              alt="Ilustrasi gagal jantung"
+              onClick={() => setZoom(true)}
+              className="cursor-zoom-in rounded-2xl w-full max-h-[350px] md:max-h-[450px] object-contain"
             />
-            <motion.div
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              viewport={viewportConfig}
-              transition={{ delay: 1 }}
-              className="absolute bottom-4 left-4 right-4 bg-white/90 backdrop-blur-sm p-4 rounded-xl shadow-lg"
-            >
-              <p className="text-sm text-gray-600 text-center">
-                Ilustrasi sistem kardiovaskular manusia
-              </p>
-            </motion.div>
           </motion.div>
         </motion.div>
       </section>
@@ -515,21 +506,17 @@ export default function LandingPage() {
             transition={{ delay: 0.2 }}
             className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl md:rounded-3xl p-6 sm:p-8 md:p-12 shadow-2xl text-white"
           >
-      
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 md:mb-6">
               Data Edukasi Pasien
             </h2>
 
-     
             <p className="text-base sm:text-lg md:text-xl text-blue-100 max-w-2xl mx-auto mb-6 md:mb-8 leading-relaxed">
               Lihat daftar pasien, status edukasi, tingkat pemahaman, dan hasil
               penilaian secara lengkap untuk perawatan yang lebih
               terpersonalisasi.
             </p>
 
-           
             <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center">
-            
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -543,7 +530,6 @@ export default function LandingPage() {
                   <ChevronRight className="ml-2 md:ml-3" size={20} />
                 </Link>
               </motion.div>
-
 
               <motion.div
                 whileHover={{ scale: 1.05 }}
@@ -562,6 +548,25 @@ export default function LandingPage() {
           </motion.div>
         </motion.div>
       </section>
+      {zoom && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          onClick={() => setZoom(false)}
+          className="fixed inset-0 bg-black/70 backdrop-blur-sm flex justify-center items-center z-50 cursor-zoom-out"
+        >
+          <motion.img
+            src="/photo/heart-failure-congestive-600w.png"
+            alt="Zoomed"
+            initial={{ scale: 0.6 }}
+            animate={{ scale: 1 }}
+            exit={{ scale: 0.6 }}
+            onClick={(e) => e.stopPropagation()} // <-- supaya klik gambar tidak menutup
+            className="max-w-[90%] max-h-[90%] rounded-2xl shadow-2xl cursor-default"
+          />
+        </motion.div>
+      )}
     </div>
   );
 }
