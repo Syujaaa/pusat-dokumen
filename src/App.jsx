@@ -84,7 +84,14 @@ export default function App() {
               }
             />
 
-            <Route path="/data-pasien" element={<Home />} />
+            <Route
+              path="/data-pasien"
+              element={
+                <ProtectedRoute>
+                  <Home />
+                </ProtectedRoute>
+              }
+            />
 
             <Route
               path="/add"
@@ -114,7 +121,14 @@ export default function App() {
             />
 
             <Route path="/booklet" element={<DocumentCenter />} />
-            <Route path="/detail/:id" element={<ViewDetail />} />
+            <Route
+              path="/detail/:id"
+              element={
+                <ProtectedRoute>
+                  <ViewDetail />
+                </ProtectedRoute>
+              }
+            />
 
             <Route
               path="/login"

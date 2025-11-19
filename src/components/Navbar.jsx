@@ -106,7 +106,7 @@ export default function Navbar() {
             </Link>
           )}
 
-          <Link
+          {/* <Link
             to="/data-pasien"
             className={`flex items-center gap-1 hover:text-blue-700 transition-colors ${isActive(
               "/data-pasien"
@@ -114,7 +114,7 @@ export default function Navbar() {
           >
             <Users className="w-4 h-4" />
             Data Pasien
-          </Link>
+          </Link> */}
 
           <Link
             to="/booklet"

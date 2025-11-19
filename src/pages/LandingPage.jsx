@@ -507,30 +507,16 @@ export default function LandingPage() {
             className="bg-gradient-to-r from-blue-600 to-blue-700 rounded-2xl md:rounded-3xl p-6 sm:p-8 md:p-12 shadow-2xl text-white"
           >
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-4 md:mb-6">
-              Data Edukasi Pasien
+              Edukasi Gagal Jantung
             </h2>
 
             <p className="text-base sm:text-lg md:text-xl text-blue-100 max-w-2xl mx-auto mb-6 md:mb-8 leading-relaxed">
-              Lihat daftar pasien, status edukasi, tingkat pemahaman, dan hasil
-              penilaian secara lengkap untuk perawatan yang lebih
-              terpersonalisasi.
+              Akses materi edukasi komprehensif tentang penanganan gagal
+              jantung, panduan perawatan mandiri, dan strategi peningkatan
+              kualitas hidup untuk pasien dan keluarga.
             </p>
 
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center">
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                className="w-full sm:w-auto"
-              >
-                <Link
-                  to="/data-pasien"
-                  className="inline-flex items-center justify-center w-full sm:w-auto px-6 py-3 md:px-10 md:py-4 bg-white text-blue-700 hover:bg-blue-50 rounded-xl md:rounded-2xl shadow-xl transition-all font-bold text-base md:text-lg"
-                >
-                  Lihat Data Pasien
-                  <ChevronRight className="ml-2 md:ml-3" size={20} />
-                </Link>
-              </motion.div>
-
+            <div className="flex justify-center">
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -538,10 +524,10 @@ export default function LandingPage() {
               >
                 <Link
                   to="/booklet"
-                  className="inline-flex items-center justify-center w-full sm:w-auto px-6 py-3 md:px-10 md:py-4 bg-transparent text-white border-2 border-white/80 hover:bg-white/10 hover:border-white rounded-xl md:rounded-2xl shadow-xl transition-all font-bold text-base md:text-lg"
+                  className="inline-flex items-center justify-center w-full sm:w-auto px-8 py-4 md:px-12 md:py-5 bg-white text-blue-700 hover:bg-blue-50 rounded-xl md:rounded-2xl shadow-xl transition-all font-bold text-lg md:text-xl"
                 >
-                  Lihat Booklet
-                  <BookOpen className="ml-2 md:ml-3" size={20} />
+                  Akses Materi Edukasi
+                  <BookOpen className="ml-3 md:ml-4" size={24} />
                 </Link>
               </motion.div>
             </div>
