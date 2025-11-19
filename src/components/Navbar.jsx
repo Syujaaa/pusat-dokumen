@@ -11,7 +11,7 @@ import {
   Menu,
   X,
   Users,
-  List
+  List,
 } from "lucide-react";
 import api from "../api";
 
@@ -129,6 +129,15 @@ export default function Navbar() {
           {isLoggedIn ? (
             <>
               <Link
+                to="/data-pasien"
+                className={`flex items-center gap-1 hover:text-blue-700 transition-colors ${isActive(
+                  "/data-pasien"
+                )}`}
+              >
+                <Users className="w-4 h-4" />
+                Data Pasien
+              </Link>
+              <Link
                 to="/add"
                 className={`flex items-center gap-1 hover:text-blue-700 transition-colors ${isActive(
                   "/add"
@@ -216,14 +225,14 @@ export default function Navbar() {
                 </Link>
 
                 <Link
-                to="/sessions"
-                className={`flex items-center gap-1 hover:text-blue-700 transition-colors ${isActive(
-                  "/sessions"
-                )}`}
-              >
-                <List className="w-4 h-4" />
-                Sessions
-              </Link>
+                  to="/sessions"
+                  className={`flex items-center gap-1 hover:text-blue-700 transition-colors ${isActive(
+                    "/sessions"
+                  )}`}
+                >
+                  <List className="w-4 h-4" />
+                  Sessions
+                </Link>
 
                 <button
                   onClick={() => {
