@@ -196,15 +196,6 @@ export default function Navbar() {
             )}
 
             <Link
-              to="/data-pasien"
-              onClick={() => setOpen(false)}
-              className={`flex items-center gap-2 ${isActive("/data-pasien")}`}
-            >
-              <Users className="w-5 h-5" />
-              Data Pasien
-            </Link>
-
-            <Link
               to="/booklet"
               onClick={() => setOpen(false)}
               className={`flex items-center gap-2 ${isActive("/booklet")}`}
@@ -215,6 +206,17 @@ export default function Navbar() {
 
             {isLoggedIn ? (
               <>
+                <Link
+                  to="/data-pasien"
+                  onClick={() => setOpen(false)}
+                  className={`flex items-center gap-2 ${isActive(
+                    "/data-pasien"
+                  )}`}
+                >
+                  <Users className="w-5 h-5" />
+                  Data Pasien
+                </Link>
+
                 <Link
                   to="/add"
                   onClick={() => setOpen(false)}
