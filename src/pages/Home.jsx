@@ -4,7 +4,7 @@ import api from "../api";
 import Swal from "sweetalert2";
 import DataTable from "react-data-table-component";
 import { CheckCircle, AlertTriangle } from "lucide-react";
-import { FaEdit, FaTrash, FaEye } from "react-icons/fa";
+import { FaEdit, FaTrash, FaEye, FaFileExcel } from "react-icons/fa";
 import { ChevronRight } from "lucide-react";
 
 export default function Home() {
@@ -27,6 +27,36 @@ export default function Home() {
       <div className="w-10 h-10 border-4 border-blue-400 border-t-transparent rounded-full animate-spin"></div>
     </div>
   );
+
+  const handleExport = async () => {
+    try {
+      const response = await api.get("/export-edukasi", {
+        responseType: "blob",
+      });
+
+      const blob = new Blob([response.data], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+
+      const url = window.URL.createObjectURL(blob);
+
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "data-edukasi.xlsx";
+      document.body.appendChild(a);
+      a.click();
+
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error("Export gagal", error);
+      Swal.fire({
+        icon: "error",
+        title: "Gagal mengekspor data!",
+        text: "Terjadi kesalahan saat mengambil file dari server.",
+      });
+    }
+  };
 
   useEffect(() => {
     const handleStorageChange = () => {
@@ -454,7 +484,20 @@ export default function Home() {
             setSearch(e.target.value);
           }}
         />
+
+        {totalRows > 0 ? (
+          <button
+            onClick={handleExport}
+            className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg shadow transition"
+          >
+            <FaFileExcel className="text-white" />
+            Export Excel
+          </button>
+        ) : (
+          <p>Minimal 1 data pasien untuk export Excel.</p>
+        )}
       </div>
+
       <div ref={tableRef}>
         <DataTable
           title="🩺 Data Edukasi Pasien"
