@@ -10,6 +10,8 @@ export default function DocumentCenter() {
     const saved = localStorage.getItem("readDocs");
     return saved ? JSON.parse(saved) : {};
   });
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+
   const [loadingDocs, setLoadingDocs] = useState(true);
   const LoadingSpinner = () => (
     <div className="flex items-center justify-center py-10">
@@ -76,6 +78,13 @@ export default function DocumentCenter() {
 
     if (!isAdmin) {
       setReadDocs((prev) => ({ ...prev, [doc.id]: true }));
+    }
+
+    if (isMobile) {
+      const link = document.createElement("a");
+      link.href = doc.file_url;
+      link.download = doc.title + ".pdf";
+      link.click();
     }
   };
 
@@ -459,31 +468,19 @@ export default function DocumentCenter() {
             </button>
           </div>
         )}
-
-        {/* {!isAdmin &&
-          (() => {
-            const data = JSON.parse(localStorage.getItem("readDocs") || "{}");
-            return Object.keys(data).length > 0;
-          })() && (
-            <button
-              onClick={() => {
-                localStorage.removeItem("readDocs");
-                setReadDocs({});
-              }}
-              className="w-full mt-6 bg-red-600 hover:bg-red-700 text-white py-2 rounded-md"
-            >
-              🔁 Reset Checklist
-            </button>
-          )} */}
       </div>
 
       <div className="flex-1 bg-gray-900 flex items-center justify-center">
         {selectedDoc ? (
-          <iframe
-            src={selectedDoc.file_url}
-            title={selectedDoc.title}
-            className="w-full h-full bg-white"
-          ></iframe>
+          isMobile ? (
+            <p className="text-gray-400 text-lg">Dokumen sedang diunduh...</p>
+          ) : (
+            <iframe
+              src={selectedDoc.file_url}
+              title={selectedDoc.title}
+              className="w-full h-full bg-white"
+            ></iframe>
+          )
         ) : (
           <p className="text-gray-400 text-lg">Pilih dokumen untuk dibaca</p>
         )}
